@@ -104,19 +104,18 @@ ERR_NOSUCHSERVER нет сервера или клиента с указанны
 ERR_NOSUCHSERVER нет сервера или клиента с указанным именем.
 
 2.3.9 команда ERROR
-параметры: <target> <error msg>
+параметры: <error msg>
 
 Используется сервером, чтобы рассылать клиентам сообщения об ошибках.
 
-Пример: ERROR johnsmith1976 'Cannot change nick: Incorrect nick'
+Пример: ERROR 'Cannot change nick: Incorrect nick'
 
 2.3.10 команда ServiceMSG
-параметры: <target> <service message>
+параметры: <service message>
 
 Используется сервером, чтобы рассылать клиентам сервисные сообщения.
-В <target> указывается либо ник либо *(для массовой рассылки)
 
-Пример: ServiceMSG xam_vz 'User john frusciante connected on chat'
+Пример: ServiceMSG 'User john frusciante connected on chat'
 
 
 
