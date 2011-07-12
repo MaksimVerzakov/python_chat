@@ -12,14 +12,14 @@ class ConnectionDlgView(wx.Dialog):
 
         fgs = wx.FlexGridSizer(2, 2, 9, 25)
 
-        thost = wx.StaticText(panel, label="Host")
-        tport = wx.StaticText(panel, label="Port")
+        sthost = wx.StaticText(panel, label="Host")
+        stport = wx.StaticText(panel, label="Port")
         
-        tc1 = wx.TextCtrl(panel)
-        tc2 = wx.TextCtrl(panel)
+        self._host = wx.TextCtrl(panel)
+        self._port = wx.TextCtrl(panel)
         
-        fgs.AddMany([(thost), (tc1, 1, wx.EXPAND), (tport), 
-            (tc2, 1, wx.EXPAND)])
+        fgs.AddMany([(sthost), (self._host, 1, wx.EXPAND), (stport), 
+            (self._port, 1, wx.EXPAND)])
 
         fgs.AddGrowableCol(1, 1)
                 
@@ -29,6 +29,13 @@ class ConnectionDlgView(wx.Dialog):
         hbox.Add(connectbtn, flag=wx.ALIGN_CENTER|wx.BOTTOM, border=15)
         
         panel.SetSizer(hbox)
+        
+        self.Bind(wx.EVT_BUTTON, self.OnConnect, id=connectbtn.GetId())
+    
+    def OnConnect(self, event):
+        host = self._host.GetValue()
+        port = self._port.GetValue()
+        
         
 class LoginDlgView(wx.Dialog):
     
@@ -43,11 +50,11 @@ class LoginDlgView(wx.Dialog):
         tnick = wx.StaticText(panel, label="Nickname")
         tpass = wx.StaticText(panel, label="Password")
                 
-        tc1 = wx.TextCtrl(panel)
-        tc2 = wx.TextCtrl(panel, style=wx.TE_PASSWORD)
+        self._nick = wx.TextCtrl(panel)
+        self._pass = wx.TextCtrl(panel, style=wx.TE_PASSWORD)
                 
-        fgs.AddMany([(tnick), (tc1, 1, wx.EXPAND), (tpass), 
-            (tc2, 1, wx.EXPAND)])
+        fgs.AddMany([(tnick), (self._nick, 1, wx.EXPAND), (tpass), 
+            (self._pass, 1, wx.EXPAND)])
         
         fgs.AddGrowableCol(1, 1)
         
@@ -67,12 +74,17 @@ class LoginDlgView(wx.Dialog):
         panel.SetSizer(hbox)
         
         self.Bind(wx.EVT_BUTTON, self.OnNewUser, id=create_new_btn.GetId())
+        self.Bind(wx.EVT_BUTTON, self.OnLogin, id=login_btn.GetId())
         
     def OnNewUser(self, event):
         cDlg = CreateNewDlgView(None, -1, 'CreateNew')
         cDlg.ShowModal()
         cDlg.Destroy()
         self.Close()
+        
+    def OnLogin(self, event):
+        nick = self._nick.GetValue()
+        password = self._pass.GetValue()
         
         
 class CreateNewDlgView(wx.Dialog):
@@ -89,25 +101,31 @@ class CreateNewDlgView(wx.Dialog):
         tpass1 = wx.StaticText(panel, label="Password")
         tpass2 = wx.StaticText(panel, label="Password Again")
                 
-        tc1 = wx.TextCtrl(panel)
-        tc2 = wx.TextCtrl(panel, style=wx.TE_PASSWORD)
-        tc3 = wx.TextCtrl(panel, style=wx.TE_PASSWORD)
+        self._nick = wx.TextCtrl(panel)
+        self._pass1 = wx.TextCtrl(panel, style=wx.TE_PASSWORD)
+        self._pass2 = wx.TextCtrl(panel, style=wx.TE_PASSWORD)
                 
-        fgs.AddMany([(tnick), (tc1, 1, wx.EXPAND), (tpass1), 
-            (tc2, 1, wx.EXPAND),(tpass2), (tc3, 1, wx.EXPAND)])
+        fgs.AddMany([(tnick), (self._nick, 1, wx.EXPAND), (tpass1), 
+            (self._pass1, 1, wx.EXPAND),(tpass2), (self._pass2, 1, wx.EXPAND)])
         
         fgs.AddGrowableCol(1, 1)
         
         hbox.Add(fgs, proportion=1, flag=wx.ALL|wx.EXPAND, border=15)
             
         bttnbox = wx.BoxSizer(wx.HORIZONTAL)
-        create_new_btn = wx.Button(panel, label='Create', size=(100, 27))
-        bttnbox.Add(create_new_btn)
-
+        create_btn = wx.Button(panel, label='Create', size=(100, 27))
+        bttnbox.Add(create_btn)
         
         hbox.Add(bttnbox, flag=wx.BOTTOM|wx.ALIGN_CENTER, border=15)
         
         panel.SetSizer(hbox)
+        
+        self.Bind(wx.EVT_BUTTON, self.OnCreate, id=create_btn.GetId())
+    
+    def OnCreate(self, event):
+        nick = self._nick.GetValue()
+        password1 = self._pass1.GetValue()
+        password1 = self._pass2.GetValue()
 
 class ChatView(wx.Frame):
   
@@ -123,40 +141,45 @@ class ChatView(wx.Frame):
         
     def InitUI(self):
     
-        panel = wx.Panel(self)
+        splitter = wx.SplitterWindow(self, -1)
+            
+        panel1 = wx.Panel(splitter)
 
         font = wx.SystemSettings_GetFont(wx.SYS_SYSTEM_FONT)
         font.SetPointSize(9)
         
         chatbox = wx.BoxSizer(wx.VERTICAL)
 
-        chat_view_box = wx.BoxSizer(wx.HORIZONTAL)
-        viewctrl = wx.TextCtrl(panel, style=wx.TE_MULTILINE)
-        chat_view_box.Add(viewctrl, proportion=1, flag=wx.EXPAND)
-        chatbox.Add(chat_view_box, proportion=1, flag=wx.EXPAND)
-
-        chatbox.Add((-1, 10))
-                        
+        viewctrl = wx.TextCtrl(panel1, style=wx.TE_MULTILINE)
+        chatbox.Add(viewctrl, proportion=1, flag=wx.EXPAND|wx.LEFT|
+                    wx.TOP|wx.BOTTOM, border=10)
+                                
         chat_send_box = wx.BoxSizer(wx.HORIZONTAL)
-        tc = wx.TextCtrl(panel)
+        
+        tc = wx.TextCtrl(panel1)
         chat_send_box.Add(tc, proportion=1)
-        sendbtn = wx.Button(panel, label='Send', size=(70, 27))
+        
+        sendbtn = wx.Button(panel1, wx.NewId(), label='Send', size=(70, 27))
+        self.Bind(wx.EVT_BUTTON, self.OnSend, id=sendbtn.GetId())
         chat_send_box.Add(sendbtn, flag=wx.LEFT, border=5)
-        chatbox.Add(chat_send_box, flag=wx.EXPAND)
         
-        mainbox = wx.BoxSizer(wx.HORIZONTAL)
+        chatbox.Add(chat_send_box, flag=wx.EXPAND|wx.BOTTOM|wx.LEFT,
+                    border=10)
+        panel1.SetSizer(chatbox)
         
-        mainbox.Add(chatbox, proportion=1, flag=wx.EXPAND|wx.ALL, border=10)
+        panel2 = wx.Panel(splitter)
         
-        mainbox.Add((-1, 10))
-        
-        listctr = wx.ListBox(panel, 26, (-1, -1), (170, 130), 
+        listbox = wx.BoxSizer(wx.VERTICAL)
+        listctr = wx.ListBox(panel2, 26, (-1, -1), (170, 130), 
 		['xam_vz', 'g00se'], wx.LB_SINGLE) 
+        listbox.Add(listctr, flag=wx.EXPAND|wx.RIGHT|wx.TOP, border=10)
+        panel2.SetSizer(listbox)
         
-        mainbox.Add(listctr, proportion=1, flag=wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)    
-
-        panel.SetSizer(mainbox)
+        splitter.SplitVertically(panel1, panel2)
         
+    def OnSend(self, event):
+        pass
+                
     def ConnectionDlg(self):
         cDlg = ConnectionDlgView(None, -1, 'Connect')
         cDlg.ShowModal()
