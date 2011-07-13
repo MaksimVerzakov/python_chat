@@ -1,6 +1,9 @@
 # gotoclass.py
 
 import wx
+import  wx.lib.newevent
+
+SomeNewEvent, EVT_SOME_NEW_EVENT = wx.lib.newevent.NewEvent()
 
 class ConnectionDlgView(wx.Dialog):
     
@@ -35,7 +38,9 @@ class ConnectionDlgView(wx.Dialog):
     def OnConnect(self, event):
         host = self._host.GetValue()
         port = self._port.GetValue()
-        
+        #Send an error event to parent window if connection failed
+        evt = SomeNewEvent(texterr="Unable to connect")
+        wx.PostEvent(self.GetParent(), evt)        
         
 class LoginDlgView(wx.Dialog):
     
@@ -77,7 +82,7 @@ class LoginDlgView(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.OnLogin, id=login_btn.GetId())
         
     def OnNewUser(self, event):
-        cDlg = CreateNewDlgView(None, -1, 'CreateNew')
+        cDlg = CreateNewDlgView(self.GetParent(), -1, 'CreateNew')
         cDlg.ShowModal()
         cDlg.Destroy()
         self.Close()
@@ -85,6 +90,9 @@ class LoginDlgView(wx.Dialog):
     def OnLogin(self, event):
         nick = self._nick.GetValue()
         password = self._pass.GetValue()
+        #Send an error event to parent window if login was failed
+        evt = SomeNewEvent(texterr="Wrong nickname or password")
+        wx.PostEvent(self.GetParent(), evt)   
         
         
 class CreateNewDlgView(wx.Dialog):
@@ -125,7 +133,13 @@ class CreateNewDlgView(wx.Dialog):
     def OnCreate(self, event):
         nick = self._nick.GetValue()
         password1 = self._pass1.GetValue()
-        password1 = self._pass2.GetValue()
+        password2 = self._pass2.GetValue()
+        if(password1 != password2):
+            #Send an error event to parent window if login was failed
+            evt = SomeNewEvent(texterr="Passwords didn't match.")
+            wx.PostEvent(self.GetParent(), evt)
+            self._pass1.Clear()
+            self._pass2.Clear()
 
 class ChatView(wx.Frame):
   
@@ -133,6 +147,7 @@ class ChatView(wx.Frame):
         super(ChatView, self).__init__(parent, title=title, 
             size=(390, 350))
         
+        self.Bind(EVT_SOME_NEW_EVENT, self.OnError)
         self.ConnectionDlg()
         self.LoginDlg() 
         self.InitUI()
@@ -175,20 +190,26 @@ class ChatView(wx.Frame):
         listbox.Add(listctr, flag=wx.EXPAND|wx.RIGHT|wx.TOP, border=10)
         panel2.SetSizer(listbox)
         
-        splitter.SplitVertically(panel1, panel2)
+        splitter.SetMinimumPaneSize(100)
+        splitter.SplitVertically(panel1, panel2)               
         
     def OnSend(self, event):
         pass
                 
     def ConnectionDlg(self):
-        cDlg = ConnectionDlgView(None, -1, 'Connect')
+        cDlg = ConnectionDlgView(self, -1, 'Connect')
         cDlg.ShowModal()
         cDlg.Destroy()
         
     def LoginDlg(self):
-        cDlg = LoginDlgView(None, -1, 'Login')
+        cDlg = LoginDlgView(self, -1, 'Login')
         cDlg.ShowModal()
         cDlg.Destroy()
+        
+    def OnError (self, event):
+        dial = wx.MessageDialog(None, event.texterr, 'Error', wx.OK | 
+            wx.ICON_ERROR)
+        dial.ShowModal()
         
     
 
