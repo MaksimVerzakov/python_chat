@@ -1,9 +1,11 @@
 # gotoclass.py
 
 import wx
-import  wx.lib.newevent
+import wx.lib.newevent
+import time
 
-SomeNewEvent, EVT_SOME_NEW_EVENT = wx.lib.newevent.NewEvent()
+ErrorEvent, EVT_ERROR_EVENT = wx.lib.newevent.NewEvent()
+MsgEvent, EVT_NEW_MSG_EVENT = wx.lib.newevent.NewEvent()
 
 class ConnectionDlgView(wx.Dialog):
     
@@ -39,7 +41,7 @@ class ConnectionDlgView(wx.Dialog):
         host = self._host.GetValue()
         port = self._port.GetValue()
         #Send an error event to parent window if connection failed
-        evt = SomeNewEvent(texterr="Unable to connect")
+        evt = ErrorEvent(text="Unable to connect")
         wx.PostEvent(self.GetParent(), evt)        
         
 class LoginDlgView(wx.Dialog):
@@ -91,7 +93,7 @@ class LoginDlgView(wx.Dialog):
         nick = self._nick.GetValue()
         password = self._pass.GetValue()
         #Send an error event to parent window if login was failed
-        evt = SomeNewEvent(texterr="Wrong nickname or password")
+        evt = ErrorEvent(text="Wrong nickname or password")
         wx.PostEvent(self.GetParent(), evt)   
         
         
@@ -136,7 +138,7 @@ class CreateNewDlgView(wx.Dialog):
         password2 = self._pass2.GetValue()
         if(password1 != password2):
             #Send an error event to parent window if login was failed
-            evt = SomeNewEvent(texterr="Passwords didn't match.")
+            evt = ErrorEvent(text="Passwords didn't match.")
             wx.PostEvent(self.GetParent(), evt)
             self._pass1.Clear()
             self._pass2.Clear()
@@ -147,7 +149,8 @@ class ChatView(wx.Frame):
         super(ChatView, self).__init__(parent, title=title, 
             size=(390, 350))
         
-        self.Bind(EVT_SOME_NEW_EVENT, self.OnError)
+        self.Bind(EVT_ERROR_EVENT, self.OnError)
+        self.Bind(EVT_NEW_MSG_EVENT, self.OnUpdateChatView)
         self.ConnectionDlg()
         self.LoginDlg() 
         self.InitUI()
@@ -165,14 +168,14 @@ class ChatView(wx.Frame):
         
         chatbox = wx.BoxSizer(wx.VERTICAL)
 
-        viewctrl = wx.TextCtrl(panel1, style=wx.TE_MULTILINE)
-        chatbox.Add(viewctrl, proportion=1, flag=wx.EXPAND|wx.LEFT|
+        self.viewctrl = wx.TextCtrl(panel1, style=wx.TE_MULTILINE)
+        chatbox.Add(self.viewctrl, proportion=1, flag=wx.EXPAND|wx.LEFT|
                     wx.TOP|wx.BOTTOM, border=10)
                                 
         chat_send_box = wx.BoxSizer(wx.HORIZONTAL)
         
-        tc = wx.TextCtrl(panel1)
-        chat_send_box.Add(tc, proportion=1)
+        self.tc = wx.TextCtrl(panel1)
+        chat_send_box.Add(self.tc, proportion=1)
         
         sendbtn = wx.Button(panel1, wx.NewId(), label='Send', size=(70, 27))
         self.Bind(wx.EVT_BUTTON, self.OnSend, id=sendbtn.GetId())
@@ -185,16 +188,22 @@ class ChatView(wx.Frame):
         panel2 = wx.Panel(splitter)
         
         listbox = wx.BoxSizer(wx.VERTICAL)
-        listctr = wx.ListBox(panel2, 26, (-1, -1), (170, 130), 
+        self.listctr = wx.ListBox(panel2, 26, (-1, -1), (170, 130), 
 		['xam_vz', 'g00se'], wx.LB_SINGLE) 
-        listbox.Add(listctr, flag=wx.EXPAND|wx.RIGHT|wx.TOP, border=10)
+        self.Bind(wx.EVT_LISTBOX_DCLICK, self.OnListBoxClick, id=self.listctr.GetId())
+        listbox.Add(self.listctr, flag=wx.EXPAND|wx.RIGHT|wx.TOP, border=10)
         panel2.SetSizer(listbox)
         
         splitter.SetMinimumPaneSize(100)
         splitter.SplitVertically(panel1, panel2)               
         
     def OnSend(self, event):
-        pass
+        if(self.tc.IsEmpty()):
+            return
+        msgtime = time.strftime('%H:%M:%S', time.gmtime())                 
+        evt = MsgEvent(text='[%s]: %s\n' % (msgtime, self.tc.GetValue()))
+        wx.PostEvent(self, evt) 
+        self.tc.Clear()
                 
     def ConnectionDlg(self):
         cDlg = ConnectionDlgView(self, -1, 'Connect')
@@ -207,9 +216,20 @@ class ChatView(wx.Frame):
         cDlg.Destroy()
         
     def OnError (self, event):
-        dial = wx.MessageDialog(None, event.texterr, 'Error', wx.OK | 
+        dial = wx.MessageDialog(None, event.text, 'Error', wx.OK | 
             wx.ICON_ERROR)
         dial.ShowModal()
+    
+    def OnUpdateContactList(self, event):
+        pass
+        
+    def OnListBoxClick(self, event):
+        index = event.GetSelection()
+        nick = self.listctr.GetString(index)
+        self.tc.AppendText(nick)
+        
+    def OnUpdateChatView(self, event):
+        self.viewctrl.AppendText(event.text)
         
     
 
