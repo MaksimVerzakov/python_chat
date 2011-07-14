@@ -7,6 +7,30 @@ import time
 ErrorEvent, EVT_ERROR_EVENT = wx.lib.newevent.NewEvent()
 MsgEvent, EVT_NEW_MSG_EVENT = wx.lib.newevent.NewEvent()
 
+class SettingsDlg(wx.Dialog):
+    
+    def __init__(self, parent, id, title):
+        
+        wx.Dialog.__init__(self, parent, id, title, size=(250, 120))
+        
+        staticbox = wx.StaticBox(self, -1, 'Connection', (5, 5), size=(240, 110))
+        hbox = wx.BoxSizer(wx.VERTICAL)
+        fgs = wx.FlexGridSizer(2, 2, 9, 25)
+
+        sthost = wx.StaticText(self, label="Host")
+        stport = wx.StaticText(self, label="Port")
+        
+        self._host = wx.TextCtrl(self)
+        self._port = wx.TextCtrl(self)
+        
+        fgs.AddMany([(sthost), (self._host, 1, wx.EXPAND), (stport), 
+            (self._port, 1, wx.EXPAND)])
+
+        fgs.AddGrowableCol(1, 1)
+        hbox.Add(fgs, proportion=1, flag=wx.ALL|wx.EXPAND, border=30)
+        self.SetSizer(hbox)
+        
+
 class ConnectionDlgView(wx.Dialog):
     
     def __init__(self, parent, id, title):
@@ -159,6 +183,14 @@ class ChatView(wx.Frame):
         
     def InitUI(self):
     
+    
+        toolbar = self.CreateToolBar()
+        ID_SETTINGSTOOL = wx.NewId()
+        toolbar.AddLabelTool(ID_SETTINGSTOOL, '', wx.Bitmap('icons/settings_button.png'))
+        toolbar.Realize()
+        
+        self.Bind(wx.EVT_TOOL, self.OnSettings, id=ID_SETTINGSTOOL)
+            
         splitter = wx.SplitterWindow(self, -1)
             
         panel1 = wx.Panel(splitter)
@@ -170,7 +202,7 @@ class ChatView(wx.Frame):
 
         self.viewctrl = wx.TextCtrl(panel1, style=wx.TE_MULTILINE)
         chatbox.Add(self.viewctrl, proportion=1, flag=wx.EXPAND|wx.LEFT|
-                    wx.TOP|wx.BOTTOM, border=10)
+                    wx.BOTTOM, border=10)
                                 
         chat_send_box = wx.BoxSizer(wx.HORIZONTAL)
         
@@ -188,10 +220,10 @@ class ChatView(wx.Frame):
         panel2 = wx.Panel(splitter)
         
         listbox = wx.BoxSizer(wx.VERTICAL)
-        self.listctr = wx.ListBox(panel2, 26, (-1, -1), (170, 130), 
+        self.listctr = wx.ListBox(panel2, 26, (-1, -1), (80, 130), 
 		['xam_vz', 'g00se'], wx.LB_SINGLE) 
         self.Bind(wx.EVT_LISTBOX_DCLICK, self.OnListBoxClick, id=self.listctr.GetId())
-        listbox.Add(self.listctr, flag=wx.EXPAND|wx.RIGHT|wx.TOP, border=10)
+        listbox.Add(self.listctr, flag=wx.EXPAND|wx.RIGHT, border=10)
         panel2.SetSizer(listbox)
         
         splitter.SetMinimumPaneSize(100)
@@ -229,10 +261,15 @@ class ChatView(wx.Frame):
         self.tc.AppendText(nick)
         
     def OnUpdateChatView(self, event):
+        pos = self.viewctrl.GetLastPosition()
         self.viewctrl.AppendText(event.text)
-        
+        self.viewctrl.SetStyle(pos, pos + 10,  wx.TextAttr("blue"))
     
-
+    def OnSettings(self, event):
+        print 'fuuu'
+        Dlg = SettingsDlg(None, -1, 'Settings')
+        Dlg.ShowModal()
+        Dlg.Destroy()
 
 if __name__ == '__main__':
   
