@@ -1,11 +1,20 @@
 # gotoclass.py
-
+from twisted.spread import pb
 import wx
 import wx.lib.newevent
 import time
+from twisted.internet import wxreactor
+wxreactor.install()
+from chatprotocol import EchoClientFactory, EchoClient
+# import t.i.reactor only after installing wxreactor:
+from twisted.internet import reactor
 
 ErrorEvent, EVT_ERROR_EVENT = wx.lib.newevent.NewEvent()
 MsgEvent, EVT_NEW_MSG_EVENT = wx.lib.newevent.NewEvent()
+
+def OnError (self, event):
+    dial = wx.MessageDialog(None, event.text, 'Error', wx.OK|wx.ICON_ERROR)
+    dial.ShowModal()
 
 class SettingsDlg(wx.Dialog):
     
@@ -63,10 +72,14 @@ class ConnectionDlgView(wx.Dialog):
     
     def OnConnect(self, event):
         host = self._host.GetValue()
-        port = self._port.GetValue()
+        port = int(self._port.GetValue())
+        factory = EchoClientFactory()
+        reactor.connectTCP(host, port, factory)
+        d = factory.getRootObject()
+        d.addCallback(clientConnect)
+        self.Close()
         #Send an error event to parent window if connection failed
-        evt = ErrorEvent(text="Unable to connect")
-        wx.PostEvent(self.GetParent(), evt)        
+              
         
 class LoginDlgView(wx.Dialog):
     
@@ -173,9 +186,8 @@ class ChatView(wx.Frame):
         super(ChatView, self).__init__(parent, title=title, 
             size=(390, 350))
         
-        self.Bind(EVT_ERROR_EVENT, self.OnError)
+        self.Bind(EVT_ERROR_EVENT, OnError)
         self.Bind(EVT_NEW_MSG_EVENT, self.OnUpdateChatView)
-        self.ConnectionDlg()
         self.LoginDlg() 
         self.InitUI()
         self.Centre()
@@ -232,25 +244,18 @@ class ChatView(wx.Frame):
     def OnSend(self, event):
         if(self.tc.IsEmpty()):
             return
-        msgtime = time.strftime('%H:%M:%S', time.gmtime())                 
+        msgtime = time.strftime('%H:%M:%S', time.localtime(time.time()))                 
         evt = MsgEvent(text='[%s]: %s\n' % (msgtime, self.tc.GetValue()))
+        reactor.callLater(2, f.protocol.msg(self.tc.GetValue()))
         wx.PostEvent(self, evt) 
-        self.tc.Clear()
-                
-    def ConnectionDlg(self):
-        cDlg = ConnectionDlgView(self, -1, 'Connect')
-        cDlg.ShowModal()
-        cDlg.Destroy()
+        self.tc.Clear()        
         
     def LoginDlg(self):
         cDlg = LoginDlgView(self, -1, 'Login')
         cDlg.ShowModal()
         cDlg.Destroy()
         
-    def OnError (self, event):
-        dial = wx.MessageDialog(None, event.text, 'Error', wx.OK | 
-            wx.ICON_ERROR)
-        dial.ShowModal()
+   
     
     def OnUpdateContactList(self, event):
         pass
@@ -264,15 +269,27 @@ class ChatView(wx.Frame):
         pos = self.viewctrl.GetLastPosition()
         self.viewctrl.AppendText(event.text)
         self.viewctrl.SetStyle(pos, pos + 10,  wx.TextAttr("blue"))
+        
     
     def OnSettings(self, event):
         print 'fuuu'
         Dlg = SettingsDlg(None, -1, 'Settings')
         Dlg.ShowModal()
         Dlg.Destroy()
-
+        
+def clientConnect():
+    print 'sss'
+    
+def error(err):
+    state.outstanding-=1
+    print "%s" % (err.getErrorMessage())
+    
 if __name__ == '__main__':
   
     app = wx.App()
-    ChatView(None, title='Go To Class')
-    app.MainLoop()
+    
+    cDlg = ConnectionDlgView(None, -1, 'Connect')
+    cDlg.ShowModal()    
+    reactor.registerWxApp(app)
+    reactor.run()
+    
