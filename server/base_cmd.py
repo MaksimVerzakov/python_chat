@@ -1,6 +1,7 @@
 
 MAX_NICK_LENGHT = 15
 
+
 def ParsingCommand(line):
     ind = line.find(" '")
     msg = []
@@ -47,7 +48,7 @@ def NewAction(protocol, prefix, args):
         SendErrorMessage(protocol, 'err_incorrect_data')
         return
     for account in users_list:
-        if account.startswith(args[0]):
+        if account.split()[0].startswith(args[0]):
             SendErrorMessage(protocol, 'err_user_exist')
             return
     users = open(protocol.factory.filename, 'a')
@@ -97,6 +98,7 @@ def QuitAction(protocol, prefix, args):
     protocol.transport.loseConnection()
     SendServiceMessage(fctry, prefix, serv_text['serv_leave'])
 
+
 commands = {'CONNECT' : ConnectAction,
             'NEW' : NewAction,
             'NICK' : NickAction,
@@ -122,3 +124,9 @@ def SendErrorMessage(protocol, error):
 def RefreshNicks(factory):
     for user in factory.activeUsers:
         NamesAction(user)
+
+def CloseProtocol(protocol):
+    if protocol.nickname:
+        SendServiceMessage(protocol.factory, protocol.nickname, serv_text['serv_leave'])
+        protocol.factory.activeUsers.remove(protocol) 
+    protocol.factory.clientProtocols.remove(protocol) 

@@ -12,7 +12,7 @@ class ChatProtocol(LineOnlyReceiver):
         self.factory.clientProtocols.append(self)
 
     def connectionLost(self, reason):
-        self.factory.clientProtocols.remove(self) 
+        CloseProtocol(self)
 
     def lineReceived(self, line):
         prefix, cmd, args = ParsingCommand(line)
