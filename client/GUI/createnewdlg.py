@@ -1,6 +1,7 @@
 import wx
 import wx.lib.newevent
-from ErrorDlg import OnError
+
+from errordlg import error_dlg
 
 
 class CreateNewDlgView(wx.Dialog):
@@ -36,9 +37,9 @@ class CreateNewDlgView(wx.Dialog):
         
         panel.SetSizer(hbox)
         
-        self.Bind(wx.EVT_BUTTON, self.OnCreate, id=create_btn.GetId())
+        self.Bind(wx.EVT_BUTTON, self.onCreate, id=create_btn.GetId())          
     
-    def OnCreate(self, event):
+    def onCreate(self, event):
         nick = self._nick.GetValue()
         password1 = self._pass1.GetValue()
         password2 = self._pass2.GetValue()
@@ -49,4 +50,3 @@ class CreateNewDlgView(wx.Dialog):
         else:
             print nick, password1
             self.protocol.signin(nick, password1)
-            

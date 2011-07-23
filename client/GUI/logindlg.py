@@ -1,6 +1,9 @@
 import wx
 import wx.lib.newevent
-from CreateNewDlg import CreateNewDlgView
+
+from twisted.internet import reactor
+
+from createnewdlg import CreateNewDlgView
 
 class LoginDlgView(wx.Dialog):
     
