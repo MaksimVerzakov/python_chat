@@ -42,7 +42,7 @@ class LoginDlgView(wx.Dialog):
         panel.SetSizer(hbox)
         
         self.Bind(wx.EVT_BUTTON, self.OnNewUser, id=create_new_btn.GetId())
-        self.Bind(wx.EVT_BUTTON, self.OnLogin, id=login_btn.GetId())
+        self.Bind(wx.EVT_BUTTON, self.OnLogin, id=login_btn.GetId())        
         
     def OnNewUser(self, event):
         cDlg = CreateNewDlgView(self.GetParent(), -1, 'CreateNew')

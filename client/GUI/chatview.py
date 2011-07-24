@@ -20,7 +20,7 @@ class ChatView(wx.Frame):
         
         self.InitUI()
         self.Centre()
-        self.users = {}      
+        self.users = {}             
         
     def InitUI(self):
         toolbar = self.CreateToolBar()
@@ -28,8 +28,7 @@ class ChatView(wx.Frame):
         toolbar.AddLabelTool(ID_SETTINGSTOOL, '',
                              wx.Bitmap('GUI/icons/settings_button.png'))
         toolbar.Realize()
-        self.Bind(wx.EVT_TOOL, self.OnSettings, id=ID_SETTINGSTOOL)
-            
+                    
         splitter = wx.SplitterWindow(self, -1)
         left_panel = wx.Panel(splitter)
 
@@ -50,7 +49,6 @@ class ChatView(wx.Frame):
         
         sendbtn = wx.Button(left_panel, wx.NewId(), label='Send',
                             size=(70, 27))
-        self.Bind(wx.EVT_BUTTON, self.OnSend, id=sendbtn.GetId())
         chat_send_box.Add(sendbtn, flag=wx.LEFT, border=5)
         
         chatbox.Add(chat_send_box, flag=wx.EXPAND|wx.BOTTOM|wx.LEFT,
@@ -62,21 +60,26 @@ class ChatView(wx.Frame):
         listbox = wx.BoxSizer(wx.VERTICAL)
         self.listctr = wx.ListBox(right_panel, 26, (-1, -1), (80, 130),
                                   [], wx.LB_SINGLE) 
-        self.Bind(wx.EVT_LISTBOX_DCLICK, self.OnListBoxClick,
-                  id=self.listctr.GetId())
         listbox.Add(self.listctr, flag=wx.EXPAND|wx.RIGHT, border=10)
         right_panel.SetSizer(listbox)
         
         splitter.SetMinimumPaneSize(100)
         splitter.SplitVertically(left_panel, right_panel)  
         
-        self.Bind(wx.EVT_CLOSE, self.OnClose)             
+        self.Bind(wx.EVT_LISTBOX_DCLICK, self.OnListBoxClick,
+                  id=self.listctr.GetId())
+        self.Bind(wx.EVT_TOOL, self.OnSettings, id=ID_SETTINGSTOOL)
+        self.Bind(wx.EVT_BUTTON, self.OnSend, id=sendbtn.GetId())
+        self.Bind(wx.EVT_CLOSE, self.OnClose)  
+        
+        accel_tbl = wx.AcceleratorTable([(wx.ACCEL_CTRL, 13, sendbtn.GetId())])
+        self.SetAcceleratorTable(accel_tbl)            
         
     def OnSend(self, event):
         if(self.tc.IsEmpty()):
             return
         print self.tc.GetValue()
-        self.protocol.send_msg(self.tc.GetValue().decode("utf-8"))
+        self.protocol.send_msg(self.tc.GetValue())
         self.tc.Clear()        
         
     def LoginDlg(self):
@@ -136,7 +139,6 @@ class ChatView(wx.Frame):
         self.viewctrl.SetStyle(pos, colorLen, wx.TextAttr(color))
              
     def OnSettings(self, event):
-        print 'fuuu'
         Dlg = SettingsDlg(self, -1, 'Settings')
         Dlg.ShowModal()
         Dlg.Destroy()

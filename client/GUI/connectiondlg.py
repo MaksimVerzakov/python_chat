@@ -37,6 +37,4 @@ class ConnectionDlgView(wx.Dialog):
         host = self._host.GetValue()
         port = int(self._port.GetValue())  
         reactor.connectTCP(host, port, self.client_factory)
-        self.Show(False)
-        
-    
+        self.Close()   

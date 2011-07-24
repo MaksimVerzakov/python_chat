@@ -44,9 +44,10 @@ class CreateNewDlgView(wx.Dialog):
         password1 = self._pass1.GetValue()
         password2 = self._pass2.GetValue()
         if(password1 != password2):
-            OnError("Passwords didn't match")            
+            error_dlg("Passwords didn't match")            
             self._pass1.Clear()
             self._pass2.Clear()
         else:
             print nick, password1
             self.protocol.signin(nick, password1)
+        self.Close()
