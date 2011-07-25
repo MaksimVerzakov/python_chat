@@ -2,23 +2,25 @@
 from twisted.internet import reactor
 from twisted.internet.protocol import ServerFactory 
 from twisted.protocols.basic import LineOnlyReceiver 
-from base_cmd import*
+import base_cmd 
+import parser
 
 class ChatProtocol(LineOnlyReceiver): 
 
     nickname = None 
 
     def connectionMade(self): 
-        self.factory.clientProtocols.append(self)
+        self.factory.registerNewUser(self)
 
     def connectionLost(self, reason):
-        CloseProtocol(self)
+        base_cmd.closeProtocol(self)
+        self.factory.destroyUser(self)
 
     def lineReceived(self, line):
-        prefix, cmd, args = ParsingCommand(line)
+        prefix, cmd, args = parser.parsingCommand(line)
         if not cmd:
             return
-        commands[cmd](self, prefix, args)
+        base_cmd.commands[cmd](self, prefix, args)
             
 class ChatProtocolFactory(ServerFactory): 
 
@@ -29,6 +31,13 @@ class ChatProtocolFactory(ServerFactory):
     def __init__(self): 
         self.clientProtocols = []
         self.activeUsers = []
+
+    def registerNewUser(self, protocol):
+        self.clientProtocols.append(protocol)
+
+    def destroyUser(self, protocol):
+        self.clientProtocols.remove(protocol)
+        
 
 print "Starting Server"
 factory = ChatProtocolFactory()

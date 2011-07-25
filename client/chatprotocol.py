@@ -98,7 +98,7 @@ class ChatProtocol(LineReceiver):
         self.ok_defer.addErrback(self.on_error)
     
     def on_quit(self, bye):
-        self.sendLine(str('!%s QUIT c ya' % self.nick))
+        self.sendLine(str("!%s QUIT '%s'" % (self.nick, bye)))
     
     
 
