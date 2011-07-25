@@ -113,13 +113,11 @@ def sendErrorMessage(protocol, error):
     protocol.sendLine("ERROR '%s'" %err_text[error])
     
 def refreshNicks(factory):
-    print("refresss")
     for user in factory.activeUsers:
         commands['NAMES'](user)
 
 def closeProtocol(protocol):
     if protocol.nickname:
-        print 'ebala'
         sendServiceMessage(protocol.factory, protocol.nickname, serv_text['serv_leave'])
         protocol.factory.activeUsers.remove(protocol)
        # protocol.transport.loseConnection()
