@@ -6,7 +6,9 @@ from twisted.internet import defer
 from GUI.chatview import ChatView
 from GUI.logindlg import LoginDlgView
 from GUI.errordlg import error_dlg
+from parser import parsingCommand
 
+ 
 class ChatProtocol(LineReceiver):
     
     def connectionMade(self):
@@ -16,27 +18,19 @@ class ChatProtocol(LineReceiver):
         self.login_gui.ShowModal()
                
     def lineReceived(self, line):
-        print line
         self.parser(line)        
     
     def parser(self, line):
-        textstart = line.find(" '")
-        msg = []
-        if textstart == -1:
-            msg = line.split()
-        else:
-            msg = line[:textstart].split()
-            msg.append(line[textstart + 2:-1])  
-        print msg
+        msg = parsingCommand(line)
         case = {'OK':self.recd_ok,
                 'ERROR':self.recd_error,
                 'MSG':self.recd_msg,
                 'SERVICE':self.recd_service_msg,
                 'NAMES':self.recd_names
                 }
-        action = case.get(msg[0])
+        action = case.get(msg[1])
         if action:
-            action(msg[1:])
+            action(msg[2])
             
     def recd_ok(self, arg):
         self.ok_defer.callback('OK')
@@ -45,19 +39,21 @@ class ChatProtocol(LineReceiver):
         self.ok_defer.errback(ValueError(arg[0]))
         
     def recd_msg(self, arg):
-        self.gui.OnUpdateChatView(arg[0], arg[1], arg[2])
+        self.gui.OnUpdateChatView(arg[0], arg[1], arg[2][1:-1])
     
     def recd_names(self, names):
+        self.names = names
         self.gui.OnUpdateContactList(names)
     
     def recd_service_msg(self, arg):
-        print arg
-        self.gui.OnServiceChatView(arg[0], arg[1])
+        self.gui.OnServiceChatView(arg[0], arg[1][1:-1])
         
     def send_msg(self, line):
         destination = '*'
-        msg = line
-        if line.split()[0].startswith('@'):
+        msg = line.lstrip()
+        if not msg: 
+            return
+        if line.split()[0].startswith('@') and line.split()[0][1:] in self.names:
             destination = line.split()[0][1:]
             msg = line[len(destination) + 2:]
         msg = "!%s MSG %s '%s'" % (self.nick, destination, msg)
@@ -98,8 +94,9 @@ class ChatProtocol(LineReceiver):
         self.ok_defer.addErrback(self.on_error)
     
     def on_quit(self, bye):
+        print 'quit'
         self.sendLine(str("!%s QUIT '%s'" % (self.nick, bye)))
-    
+        reactor.callLater(1, reactor.stop)
     
 
 class ChatClientFactory(ClientFactory):
@@ -111,9 +108,3 @@ class ChatClientFactory(ClientFactory):
 
     def clientConnectionLost(self, connector, reason):
         error_dlg('Connection Lost:\n%s' % reason.getErrorMessage())
-        
-        
-
-        
-
-

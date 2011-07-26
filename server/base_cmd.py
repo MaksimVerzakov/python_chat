@@ -89,6 +89,7 @@ def quitAction(protocol, prefix, args):
     if not protocol.nickname:
         return
     commands['MSG'](protocol, prefix, ['*', args[0]])
+    protocol.factory.activeUsers.remove(protocol)
     fctry = protocol.factory
     sendServiceMessage(fctry, prefix, serv_text['serv_leave'])
     refreshNicks(fctry)

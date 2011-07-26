@@ -78,7 +78,6 @@ class ChatView(wx.Frame):
     def OnSend(self, event):
         if(self.tc.IsEmpty()):
             return
-        print self.tc.GetValue()
         self.protocol.send_msg(self.tc.GetValue())
         self.tc.Clear()        
         
@@ -110,7 +109,6 @@ class ChatView(wx.Frame):
         if destination == '*':
             destination = ''            
         msg = '(%s) %s: %s %s\n' % (msgtime, sender, destination, text)
-        
         pos = self.viewctrl.GetLastPosition()
         self.viewctrl.AppendText(msg)
         
@@ -145,7 +143,6 @@ class ChatView(wx.Frame):
         
     def OnClose(self, event):
         self.protocol.on_quit('')
-        reactor.stop()
         self.Destroy()
         
         

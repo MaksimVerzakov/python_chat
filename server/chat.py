@@ -17,6 +17,7 @@ class ChatProtocol(LineOnlyReceiver):
         self.factory.destroyUser(self)
 
     def lineReceived(self, line):
+        print line
         prefix, cmd, args = parser.parsingCommand(line)
         if not cmd:
             return
