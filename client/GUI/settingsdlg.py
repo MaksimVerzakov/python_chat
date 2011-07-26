@@ -3,7 +3,7 @@ import wx
 class SettingsDlg(wx.Dialog):
     
     def __init__(self, parent, id, title):
-        wx.Dialog.__init__(self, parent, id, title, size=(250, 140))
+        wx.Dialog.__init__(self, parent, id, title, size=(250, 100))
         self.protocol = parent.protocol
         panel = wx.Panel(self)
 
