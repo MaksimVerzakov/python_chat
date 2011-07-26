@@ -1,7 +1,7 @@
 import re
 
 def parsingCommand(line):
-    ptrn = r"(!\S+ )?([A-Z]+) *(([^ \t\n\r\f\v']\S* ?)*)('.+')?"
+    ptrn = r"(!\S+ )?([A-Z]+) ?(([^ \t\n\r\f\v']\S* ?)*)('.*')?"
     p = re.compile(ptrn)
     m = p.match(line)
     if not m:

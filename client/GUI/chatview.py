@@ -142,7 +142,7 @@ class ChatView(wx.Frame):
         Dlg.Destroy()
         
     def OnClose(self, event):
-        self.protocol.on_quit('')
+        self.protocol.on_quit('goodbye fellas')
         self.Destroy()
         
         
