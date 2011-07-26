@@ -84,16 +84,11 @@ def msgAction(protocol, prefix, args):
 
 @command('QUIT')
 def quitAction(protocol, prefix, args):
-    print('quit')
-    print args[0]
     if not protocol.nickname:
         return
+    closeProtocol(protocol)
     commands['MSG'](protocol, prefix, ['*', args[0]])
-    protocol.factory.activeUsers.remove(protocol)
-    fctry = protocol.factory
-    sendServiceMessage(fctry, prefix, serv_text['serv_leave'])
-    refreshNicks(fctry)
-  #  protocol.transport.loseConnection()
+   
 
 
 
@@ -118,8 +113,8 @@ def refreshNicks(factory):
         commands['NAMES'](user)
 
 def closeProtocol(protocol):
-    if protocol.nickname:
-        sendServiceMessage(protocol.factory, protocol.nickname, serv_text['serv_leave'])
+    if protocol.nickname and (protocol in protocol.factory.activeUsers):
         protocol.factory.activeUsers.remove(protocol)
-       # protocol.transport.loseConnection()
+        sendServiceMessage(protocol.factory, protocol.nickname, serv_text['serv_leave'])
+        refreshNicks(protocol.factory)
         
