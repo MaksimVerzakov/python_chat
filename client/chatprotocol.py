@@ -203,7 +203,6 @@ class ChatProtocol(LineReceiver):
         """
         self.sendLine(str("!%s QUIT '%s'" % (self.nick, bye)))
         reactor.stop()
-
     
 
 class ChatClientFactory(ClientFactory):
