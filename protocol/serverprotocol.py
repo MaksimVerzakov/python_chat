@@ -1,7 +1,6 @@
 """
 
 """
-from twisted.internet import reactor
 from twisted.internet.protocol import ServerFactory 
 from twisted.protocols.basic import LineOnlyReceiver 
 import base_cmd 

@@ -1,3 +1,4 @@
+from twisted.internet import reactor
 from protocol.serverprotocol import ChatProtocolFactory
 
 def main():
