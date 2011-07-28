@@ -145,5 +145,4 @@ class ChatView(wx.Frame):
         self.protocol.on_quit('goodbye fellas')
         self.Destroy()
         
-        
 

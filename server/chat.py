@@ -1,9 +1,18 @@
 
+
+"""
+
+"""
 from twisted.internet import reactor
 from twisted.internet.protocol import ServerFactory 
 from twisted.protocols.basic import LineOnlyReceiver 
 import base_cmd 
+import accounts_class
 import parser
+
+class ExUnknownCommand:
+    def __str__(self):
+        return self.__class__
 
 class ChatProtocol(LineOnlyReceiver): 
 
@@ -17,11 +26,15 @@ class ChatProtocol(LineOnlyReceiver):
         self.factory.destroyUser(self)
 
     def lineReceived(self, line):
-        print line
         prefix, cmd, args = parser.parsingCommand(line)
-        if not cmd:
-            return
-        base_cmd.commands[cmd](self, prefix, args)
+        try:
+            if cmd not in base_cmd.commands:
+                raise ExUnknownCommand
+            base_cmd.commands[cmd](self, prefix, args)
+        except ExUnknownCommand, error:
+            print error
+        except base_cmd.ExClass, error:
+            print error
             
 class ChatProtocolFactory(ServerFactory): 
 
@@ -32,6 +45,7 @@ class ChatProtocolFactory(ServerFactory):
     def __init__(self): 
         self.clientProtocols = []
         self.activeUsers = []
+        self.accountsData = accounts_class.AccountsClass(self.filename)
 
     def registerNewUser(self, protocol):
         self.clientProtocols.append(protocol)
@@ -41,6 +55,7 @@ class ChatProtocolFactory(ServerFactory):
         
 
 print "Starting Server"
+print base_cmd.__doc__
 factory = ChatProtocolFactory()
 reactor.listenTCP(1025, factory)
 reactor.run() 

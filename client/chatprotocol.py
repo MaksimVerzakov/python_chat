@@ -96,7 +96,7 @@ class ChatProtocol(LineReceiver):
     def on_quit(self, bye):
         print 'quit'
         self.sendLine(str("!%s QUIT '%s'" % (self.nick, bye)))
-        reactor.callLater(1, reactor.stop)
+        reactor.callLater(0.1, reactor.stop)
     
 
 class ChatClientFactory(ClientFactory):
