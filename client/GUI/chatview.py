@@ -13,8 +13,15 @@ MsgEvent, EVT_NEW_MSG_EVENT = wx.lib.newevent.NewEvent()
 
 
 class ChatView(wx.Frame):
-  
+    """
+    Main Frame that contains text controls for display chat and for 
+    add message to chat. Also it contains listbox where are all
+    online users.  
+    """  
     def __init__(self, parent, title):
+        """
+        Override __init__ of wx.Frame.           
+        """
         super(ChatView, self).__init__(parent, title=title, 
             size=(390, 350))
         
@@ -23,6 +30,10 @@ class ChatView(wx.Frame):
         self.users = {}             
         
     def InitUI(self):
+        """
+        Create all controls to a frame.
+        Add binds to catch events
+        """
         toolbar = self.CreateToolBar()
         ID_SETTINGSTOOL = wx.NewId()
         toolbar.AddLabelTool(ID_SETTINGSTOOL, '',
@@ -76,17 +87,24 @@ class ChatView(wx.Frame):
         self.SetAcceleratorTable(accel_tbl)            
         
     def OnSend(self, event):
+        """
+        Called when user pushes Send button.
+        If message isn't empty call send_msg method of protocol
+        and clear text control.
+        """
         if(self.tc.IsEmpty()):
             return
         self.protocol.send_msg(self.tc.GetValue())
         self.tc.Clear()        
         
-    def LoginDlg(self):
-        cDlg = LoginDlgView(self, -1, 'Login')
-        cDlg.ShowModal()
-        cDlg.Destroy()
-    
     def OnUpdateContactList(self, names):
+        """
+        Called when server reports about changings in list of online users
+        Update dictionary of online users and set random colors to new users.
+         
+        *atributes:*
+            names  list of online users
+        """
         self.listctr.Clear()
         self.listctr.AppendItems(names)
         users = {}
@@ -100,11 +118,27 @@ class ChatView(wx.Frame):
         self.users = users
         
     def OnListBoxClick(self, event):
+        """
+        Called when user clicks on nickname in listbox.
+         
+        Add nickname to textbox to send direct message.
+        """
         index = event.GetSelection()
         nick = self.listctr.GetString(index)
         self.tc.AppendText('@%s' % nick)
         
     def OnUpdateChatView(self, sender, destination, text):
+        """
+        Called when server reports about adding new message to chat.
+
+        Add time, sender name, destination name (if necessary) to view text control.
+
+        *atributes:*
+            sender        nickname of person who send message
+            destination   nickname of person which should received message
+                          or '*' if it's broadcast message
+            text          message itself
+        """
         msgtime = time.strftime('%H:%M:%S', time.localtime(time.time()))
         if destination == '*':
             destination = ''            
@@ -128,6 +162,15 @@ class ChatView(wx.Frame):
         self.viewctrl.SetStyle(pos, colorLen, wx.TextAttr(color))
         
     def OnServiceChatView(self, sender, text):
+        """
+        Called when server reports about service message.
+           
+        Add sender name and service message to view text control.
+
+        *atributes:*
+            sender    nickname of person who made action
+            text      message itself
+        """
         msg = '%s %s\n' % (sender, text)
         pos = self.viewctrl.GetLastPosition()
         self.viewctrl.AppendText(msg)
@@ -137,13 +180,20 @@ class ChatView(wx.Frame):
         self.viewctrl.SetStyle(pos, colorLen, wx.TextAttr(color))
              
     def OnSettings(self, event):
+        """
+        Called when user pushes Settings button.
+         
+        Create SettingsDlg from settingsdlg.
+        """
         Dlg = SettingsDlg(self, -1, 'Settings')
         Dlg.ShowModal()
         Dlg.Destroy()
         
     def OnClose(self, event):
+        """
+        Called when user close the frame.
+           
+        Send quit message to server and destoy self.
+        """
         self.protocol.on_quit('goodbye fellas')
         self.Destroy()
-        
-        
-
