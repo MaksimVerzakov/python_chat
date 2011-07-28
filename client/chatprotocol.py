@@ -2,6 +2,7 @@ from twisted.protocols.basic import LineReceiver
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor
 from twisted.internet import defer
+from twisted.internet.error import ConnectionDone
 
 from GUI.chatview import ChatView
 from GUI.logindlg import LoginDlgView
@@ -88,13 +89,14 @@ class ChatProtocol(LineReceiver):
     def change_nick(self, new_nick):
         self.sendLine(str('!%s NICK %s' % (self.nick, new_nick)))
         def on_change_nick(msg):
+            self.gui.users[new_nick] = self.gui.users[self.nick]
             self.nick = new_nick
+            
         self.ok_defer = defer.Deferred()
         self.ok_defer.addCallback(on_change_nick)
         self.ok_defer.addErrback(self.on_error)
     
     def on_quit(self, bye):
-        print 'quit'
         self.sendLine(str("!%s QUIT '%s'" % (self.nick, bye)))
         reactor.callLater(0.1, reactor.stop)
     
@@ -107,4 +109,5 @@ class ChatClientFactory(ClientFactory):
         error_dlg('Connection Faild:\n%s' % reason.getErrorMessage())        
 
     def clientConnectionLost(self, connector, reason):
-        error_dlg('Connection Lost:\n%s' % reason.getErrorMessage())
+        if not reason.check(ConnectionDone):
+            error_dlg('Connection Lost:\n%s' % reason.getErrorMessage())
