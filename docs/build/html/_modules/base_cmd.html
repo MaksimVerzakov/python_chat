@@ -1,0 +1,405 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>base_cmd &mdash; chat v1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="chat v1.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">chat v1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for base_cmd</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A Server Protocol library, contains a command handlers</span>
+
+<span class="sd">Export data :</span>
+
+<span class="sd">commands -- kind of {COMMAND: handlerFunctionName} dictionary</span>
+<span class="sd">            that links each command with her handler function</span>
+
+<span class="sd">Export functions :</span>
+
+<span class="sd">closeProtocol -- this procedure makes an actions which must be made</span>
+<span class="sd">                 when user leaves the Server</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">MAX_NICK_LENGHT</span> <span class="o">=</span> <span class="mi">15</span>
+    
+<span class="n">commands</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="command"><a class="viewcode-back" href="../protocol.html#base_cmd.command">[docs]</a><span class="k">class</span> <span class="nc">command</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;An interface for addition elements in commands dictionary&quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor save name of new command&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">cmd</span>
+        
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method add handler for command and</span>
+<span class="sd">        also add this pair in dictionary</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">commands</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+        </div>
+<span class="k">class</span> <span class="nc">ExClass</span><span class="p">(</span><span class="ne">BaseException</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span>
+        
+<span class="k">class</span> <span class="nc">ExUserExist</span><span class="p">(</span><span class="n">ExClass</span><span class="p">):</span>
+    <span class="k">pass</span>
+    
+<span class="k">class</span> <span class="nc">ExIncorrectData</span><span class="p">(</span><span class="n">ExClass</span><span class="p">):</span>
+    <span class="k">pass</span>
+    
+
+<span class="nd">@command</span><span class="p">(</span><span class="s">&#39;CONNECT&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">connectAction</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the CONNECT command handler</span>
+<span class="sd">    Calls when user want to enter the chat using his account</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments : </span>
+<span class="sd">    </span>
+<span class="sd">    prefix -- None, unused argument</span>
+<span class="sd">    args -- list with two string-type elements </span>
+<span class="sd">       first one is the login of connected user</span>
+<span class="sd">       second one is the password for user login</span>
+<span class="sd">    </span>
+<span class="sd">    Result :</span>
+<span class="sd">    </span>
+<span class="sd">    - if user was authorithed successfully</span>
+<span class="sd">         function send the &quot;OK&quot; message to client protocol</span>
+<span class="sd">         for all users in chat will send service-information message</span>
+<span class="sd">                                    and refreshed their users-list</span>
+<span class="sd">    - else </span>
+<span class="sd">         function send any ErrorMessage to client protocol</span>
+<span class="sd">         and also raise exception</span>
+<span class="sd">         user doesn&#39;t enter the chat</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">users_list</span> <span class="o">=</span> <span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">accountsData</span><span class="o">.</span><span class="n">get_acc_list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">MAX_NICK_LENGHT</span> <span class="ow">or</span> <span class="s">&#39; &#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="ow">or</span> \
+       <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">users_list</span><span class="p">:</span>
+           <span class="n">sendErrorMessage</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="s">&#39;err_incorrect_data&#39;</span><span class="p">)</span>
+           <span class="k">raise</span> <span class="n">ExIncorrectData</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">successConnect</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        
+<span class="nd">@command</span><span class="p">(</span><span class="s">&#39;NEW&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">newAction</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the NEW command handler</span>
+<span class="sd">    Calls when user want to create new account and then enter the chat</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments : </span>
+<span class="sd">    </span>
+<span class="sd">    prefix -- None, unused argument</span>
+<span class="sd">    args -- list with two string-type elements </span>
+<span class="sd">       first one is the login of new user&#39;s account</span>
+<span class="sd">       second one is the password for this account</span>
+<span class="sd">    </span>
+<span class="sd">    Result :</span>
+<span class="sd">    </span>
+<span class="sd">    - if account was created successfully</span>
+<span class="sd">         function send the &quot;OK&quot; message to client protocol</span>
+<span class="sd">         and then user will entered to the chat</span>
+<span class="sd">         for all users in chat will send service-information message</span>
+<span class="sd">                                    and refreshed their users-list</span>
+<span class="sd">    - else </span>
+<span class="sd">         function send any ErrorMessage to client protocol</span>
+<span class="sd">         and also raise exception</span>
+<span class="sd">         user doesn&#39;t enter the chat</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">MAX_NICK_LENGHT</span> <span class="ow">or</span> <span class="s">&#39; &#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">sendErrorMessage</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="s">&#39;err_incorrect_data&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ExIncorrectData</span>
+    <span class="n">users_list</span> <span class="o">=</span> <span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">accountsData</span><span class="o">.</span><span class="n">get_acc_list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">account</span> <span class="ow">in</span> <span class="n">users_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">account</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">sendErrorMessage</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="s">&#39;err_user_exist&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ExUserExist</span>
+    <span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">accountsData</span><span class="o">.</span><span class="n">add_acc</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">successConnect</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="nd">@command</span><span class="p">(</span><span class="s">&#39;NICK&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">nickAction</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the NICK command handler</span>
+<span class="sd">    Calls when user want to change his nick for another</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments : </span>
+<span class="sd">    </span>
+<span class="sd">    prefix -- type-string current user nick</span>
+<span class="sd">    args -- list with one string-type element</span>
+<span class="sd">        new_nick that user want to use</span>
+<span class="sd">    </span>
+<span class="sd">    Result :</span>
+<span class="sd">    </span>
+<span class="sd">    - if user nick was changed successfully</span>
+<span class="sd">         function send the &quot;OK&quot; message to client protocol</span>
+<span class="sd">         for all users in chat will send service-information message</span>
+<span class="sd">                                    and refreshed their users-list</span>
+<span class="sd">    - else </span>
+<span class="sd">         function send any ErrorMessage to client protocol</span>
+<span class="sd">         and also raise exception</span>
+<span class="sd">         user&#39;s nick doesn&#39;t changes</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">prefix</span> <span class="o">!=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">MAX_NICK_LENGHT</span> <span class="ow">or</span> <span class="s">&#39; &#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">sendErrorMessage</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="s">&#39;err_incorrect_data&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ExIncorrectData</span>
+        <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">activeUsers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">nickname</span> <span class="o">==</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">sendErrorMessage</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="s">&#39;err_user_exist&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ExUserExist</span>
+        <span class="n">protocol</span><span class="o">.</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">protocol</span><span class="o">.</span><span class="n">sendLine</span><span class="p">(</span><span class="s">&#39;OK&#39;</span><span class="p">)</span>
+        <span class="n">sendServiceMessage</span><span class="p">(</span><span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">serv_text</span><span class="p">[</span><span class="s">&#39;serv_change_nick&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">refreshNicks</span><span class="p">(</span><span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="p">)</span>
+
+<span class="nd">@command</span><span class="p">(</span><span class="s">&#39;NAMES&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">namesAction</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the NAMES command handler</span>
+<span class="sd">    Calls when user want to take nicks of all active users</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments : </span>
+<span class="sd">    </span>
+<span class="sd">    prefix -- string-type user nick, unused parametr</span>
+<span class="sd">    args -- None, unused parametr</span>
+<span class="sd">    </span>
+<span class="sd">    Result :</span>
+<span class="sd">    </span>
+<span class="sd">    Server send to client list of all users nickanames</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nicks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">activeUsers</span><span class="p">:</span>
+        <span class="n">nicks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">nickname</span><span class="p">)</span>
+    <span class="n">protocol</span><span class="o">.</span><span class="n">sendLine</span><span class="p">(</span><span class="s">&#39;NAMES </span><span class="si">%s</span><span class="s">&#39;</span>  <span class="o">%</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nicks</span><span class="p">))</span>
+    
+<span class="nd">@command</span><span class="p">(</span><span class="s">&#39;MSG&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">msgAction</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the MSG command handler</span>
+<span class="sd">    Calls when user want to send message to chat</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments : </span>
+<span class="sd">    </span>
+<span class="sd">    prefix -- string-type user nick</span>
+<span class="sd">    args -- list with two string-type elements </span>
+<span class="sd">       first one is the destination of user&#39;s message :</span>
+<span class="sd">                 * for all users or username of targer user</span>
+<span class="sd">       second one is the messae text concluded in &#39;&#39; </span>
+<span class="sd">                  (&#39;text_message&#39; style)</span>
+<span class="sd">    </span>
+<span class="sd">    Result :</span>
+<span class="sd">    </span>
+<span class="sd">    Server send this message (in another form) to all users</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nickname</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;MSG </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">activeUsers</span><span class="p">:</span>
+            <span class="n">user</span><span class="o">.</span><span class="n">sendLine</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+<span class="nd">@command</span><span class="p">(</span><span class="s">&#39;QUIT&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">quitAction</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the QUIT command handler</span>
+<span class="sd">    Calls when user close his chat window</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments : </span>
+<span class="sd">    </span>
+<span class="sd">    prefix -- string-type user nick</span>
+<span class="sd">    args -- list with one string-type element </span>
+<span class="sd">       element is a &#39;goodbye&#39;-message for other users</span>
+<span class="sd">    </span>
+<span class="sd">    Result :</span>
+<span class="sd">    </span>
+<span class="sd">    Server send service to all users</span>
+<span class="sd">    and call procedure that makes an actions </span>
+<span class="sd">    which must be made when user leaves the Server</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nickname</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">closeProtocol</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<span class="n">err_text</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;err_incorrect_data&#39;</span> <span class="p">:</span> <span class="s">&#39;Incorrect data&#39;</span><span class="p">,</span>
+            <span class="s">&#39;err_user_exist&#39;</span> <span class="p">:</span> <span class="s">&#39;User already exist&#39;</span><span class="p">}</span>
+
+<span class="n">serv_text</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;serv_connect&#39;</span> <span class="p">:</span> <span class="s">&#39; is connected to our daft party&#39;</span><span class="p">,</span>
+             <span class="s">&#39;serv_change_nick&#39;</span> <span class="p">:</span> <span class="s">&#39; now is known as &#39;</span><span class="p">,</span>
+             <span class="s">&#39;serv_leave&#39;</span> <span class="p">:</span> <span class="s">&#39; just leave us all&#39;</span><span class="p">}</span>
+             
+<div class="viewcode-block" id="successConnect"><a class="viewcode-back" href="../protocol.html#base_cmd.successConnect">[docs]</a><span class="k">def</span> <span class="nf">successConnect</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">nick</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This procedure calls when user entered the chat</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments :</span>
+<span class="sd">    </span>
+<span class="sd">    protocol -- the protocol of authorized user</span>
+<span class="sd">    nick -- string-type user&#39;s nick</span>
+<span class="sd">    </span>
+<span class="sd">    Result :</span>
+<span class="sd">    </span>
+<span class="sd">    -set the user nick</span>
+<span class="sd">    -send &#39;OK&#39; message for client </span>
+<span class="sd">    -allows using the chat for user</span>
+<span class="sd">    -send service-information message to other users in chat</span>
+<span class="sd">    -refresh users-lists for all active users</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">protocol</span><span class="o">.</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nick</span>
+    <span class="n">protocol</span><span class="o">.</span><span class="n">sendLine</span><span class="p">(</span><span class="s">&#39;OK&#39;</span><span class="p">)</span>
+    <span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">activeUsers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">protocol</span><span class="p">)</span>
+    <span class="n">sendServiceMessage</span><span class="p">(</span><span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="p">,</span> <span class="n">nick</span><span class="p">,</span> <span class="n">serv_text</span><span class="p">[</span><span class="s">&#39;serv_connect&#39;</span><span class="p">])</span>
+    <span class="n">refreshNicks</span><span class="p">(</span><span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="sendServiceMessage"><a class="viewcode-back" href="../protocol.html#base_cmd.sendServiceMessage">[docs]</a><span class="k">def</span> <span class="nf">sendServiceMessage</span><span class="p">(</span><span class="n">factory</span><span class="p">,</span> <span class="n">nick</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This procedure sends any kind of service-information to all active users</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments :</span>
+<span class="sd">    </span>
+<span class="sd">    factory -- the server protocol factory that contains info of activeusers</span>
+<span class="sd">    nick -- string-type user nick which is object of service information</span>
+<span class="sd">    text -- string-type service message</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">factory</span><span class="o">.</span><span class="n">activeUsers</span><span class="p">:</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">sendLine</span><span class="p">(</span><span class="s">&quot;SERVICE </span><span class="si">%s</span><span class="s"> &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">nick</span><span class="p">,</span> <span class="n">text</span><span class="p">))</span>
+    
+</div>
+<div class="viewcode-block" id="sendErrorMessage"><a class="viewcode-back" href="../protocol.html#base_cmd.sendErrorMessage">[docs]</a><span class="k">def</span> <span class="nf">sendErrorMessage</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This procedure sends any kind of error-information to user</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments :</span>
+<span class="sd">    </span>
+<span class="sd">    protocol -- client protocol of user-reciever error message</span>
+<span class="sd">    error -- string-literal error key. </span>
+<span class="sd">             error message is a value of this key in error dictionary</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">protocol</span><span class="o">.</span><span class="n">sendLine</span><span class="p">(</span><span class="s">&quot;ERROR &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span><span class="n">err_text</span><span class="p">[</span><span class="n">error</span><span class="p">])</span>
+    </div>
+<div class="viewcode-block" id="refreshNicks"><a class="viewcode-back" href="../protocol.html#base_cmd.refreshNicks">[docs]</a><span class="k">def</span> <span class="nf">refreshNicks</span><span class="p">(</span><span class="n">factory</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Refresh users-lists for all active users in chat&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">factory</span><span class="o">.</span><span class="n">activeUsers</span><span class="p">:</span>
+        <span class="n">commands</span><span class="p">[</span><span class="s">&#39;NAMES&#39;</span><span class="p">](</span><span class="n">user</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="closeProtocol"><a class="viewcode-back" href="../protocol.html#base_cmd.closeProtocol">[docs]</a><span class="k">def</span> <span class="nf">closeProtocol</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">arg</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This procedure makes an actions which must be made </span>
+<span class="sd">    when user leaves the Server</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments :</span>
+<span class="sd">    </span>
+<span class="sd">    protocol -- client protocol of leaving user</span>
+<span class="sd">    arg -- string-type farewall message of leaving user</span>
+<span class="sd">    </span>
+<span class="sd">    Result :</span>
+<span class="sd">    </span>
+<span class="sd">    Deacivate this user</span>
+<span class="sd">    Send service message to all active users</span>
+<span class="sd">    Refresh users-lists for all active users in chat</span>
+<span class="sd">    If user send farewall message it send with service message</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nickname</span> <span class="ow">and</span> <span class="p">(</span><span class="n">protocol</span> <span class="ow">in</span> <span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">activeUsers</span><span class="p">):</span>
+        <span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">activeUsers</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">protocol</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">serv_text</span><span class="p">[</span><span class="s">&#39;serv_leave&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s">&#39; and tell : </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">arg</span>
+        <span class="n">sendServiceMessage</span><span class="p">(</span><span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="p">,</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nickname</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="n">refreshNicks</span><span class="p">(</span><span class="n">protocol</span><span class="o">.</span><span class="n">factory</span><span class="p">)</span>
+        
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">chat v1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, M. Verzakov.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

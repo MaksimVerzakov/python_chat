@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Chat Protocol Documentation &mdash; chat v1.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="chat v1.0 documentation" href="index.html" />
+    <link rel="next" title="Chat GUI Documentation" href="gui.html" />
+    <link rel="prev" title="Client Documentation" href="client.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="gui.html" title="Chat GUI Documentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="client.html" title="Client Documentation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">chat v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-protocol">
+<span id="chat-protocol-documentation"></span><h1>Chat Protocol Documentation<a class="headerlink" href="#module-protocol" title="Permalink to this headline">¶</a></h1>
+<p>Protocol</p>
+<div class="section" id="module-chatprotocol">
+<span id="chatprotocol"></span><h2>chatprotocol<a class="headerlink" href="#module-chatprotocol" title="Permalink to this headline">¶</a></h2>
+<p>Module contains client part of classes required for connection 
+between client and server.</p>
+<dl class="docutils">
+<dt>Exported Classes:</dt>
+<dd><p class="first">ChatProtocol &#8211; provide receiving and sending messages between 
+client and server</p>
+<p class="last">ChatClientFactory &#8211; derives twisted.internet.protocol.ClientFactory</p>
+</dd>
+</dl>
+<dl class="class">
+<dt id="chatprotocol.ChatClientFactory">
+<em class="property">class </em><tt class="descclassname">chatprotocol.</tt><tt class="descname">ChatClientFactory</tt><a class="reference internal" href="_modules/chatprotocol.html#ChatClientFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatClientFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class ChatClientFactory derives twisted.internet.protocol.ClientFactory.</p>
+<dl class="method">
+<dt id="chatprotocol.ChatClientFactory.clientConnectionFailed">
+<tt class="descname">clientConnectionFailed</tt><big>(</big><em>connector</em>, <em>reason</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatClientFactory.clientConnectionFailed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatClientFactory.clientConnectionFailed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides twisted.internet.protocol.ClientFactory.clientConnectionFailed
+Create error_dlg from GUI.errordlg with the reason why connection
+was failed</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatClientFactory.clientConnectionLost">
+<tt class="descname">clientConnectionLost</tt><big>(</big><em>connector</em>, <em>reason</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatClientFactory.clientConnectionLost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatClientFactory.clientConnectionLost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides twisted.internet.protocol.ClientFactory.clientConnectionFailed
+Create error_dlg from GUI.errordlg with the reason why connection
+was lost if it&#8217;s not close clearly.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="chatprotocol.ChatClientFactory.protocol">
+<tt class="descname">protocol</tt><a class="headerlink" href="#chatprotocol.ChatClientFactory.protocol" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#chatprotocol.ChatProtocol" title="chatprotocol.ChatProtocol"><tt class="xref py py-class docutils literal"><span class="pre">ChatProtocol</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="chatprotocol.ChatProtocol">
+<em class="property">class </em><tt class="descclassname">chatprotocol.</tt><tt class="descname">ChatProtocol</tt><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide receiving and sending messages between client and server
+Class ChatProtocol derives twisted.protocol.basic.LineReceiver.</p>
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.change_nick">
+<tt class="descname">change_nick</tt><big>(</big><em>new_nick</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.change_nick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.change_nick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send NICK message to server with new nick as arguments to
+change nickname.
+Add callbacks on_change_nick and errback self.on_error to
+self.ok_defer to catch Ok or Error message from server.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.connectionMade">
+<tt class="descname">connectionMade</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.connectionMade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.connectionMade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides twisted.protocol.basic.LineReceiver.connectionMade
+Initialize Login Dialog to set host and port for connection</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.lineReceived">
+<tt class="descname">lineReceived</tt><big>(</big><em>line</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.lineReceived"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.lineReceived" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides twisted.protocol.basic.LineReceiver.lineReceived
+Send line to self.parser function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.login">
+<tt class="descname">login</tt><big>(</big><em>nick</em>, <em>password</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send CONNECT message to server with nick and 
+password as arguments to register exicting user.
+Add callbacks self.on_login and errback self.on_login_error to
+self.ok_defer to catch Ok or Error message from server.</p>
+<dl class="docutils">
+<dt><em>arguments:</em></dt>
+<dd><p class="first">nick</p>
+<p class="last">password</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.on_error">
+<tt class="descname">on_error</tt><big>(</big><em>err</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.on_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.on_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when recevied error message from server.</p>
+<p>Create error_dlg from GUI.errordlg with error message.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.on_login">
+<tt class="descname">on_login</tt><big>(</big><em>msg</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.on_login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.on_login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when recevied OK message when user login.
+Create ChatView frame from GUI.chatview.
+Set self as protocol to ChatView frame.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.on_login_error">
+<tt class="descname">on_login_error</tt><big>(</big><em>err</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.on_login_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.on_login_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when recevied error message from server when user login.</p>
+<p>Create error_dlg from GUI.errordlg with error message.
+Show again login dialog.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.on_quit">
+<tt class="descname">on_quit</tt><big>(</big><em>bye</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.on_quit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.on_quit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when user try to close program.
+Send QUIT message to server with last message as argument.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.parser">
+<tt class="descname">parser</tt><big>(</big><em>line</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.parser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse line to tuple of prefix, command and message.
+Call a function due to command.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.recd_error">
+<tt class="descname">recd_error</tt><big>(</big><em>arg</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.recd_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.recd_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when received ERROR command from server.</p>
+<p>Callback error to self.ok_defer with an error description</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.recd_msg">
+<tt class="descname">recd_msg</tt><big>(</big><em>arg</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.recd_msg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.recd_msg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when received MSG command from server.
+Call OnUpdateChatView method of gui with arguments:
+sender, destination and text message</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.recd_names">
+<tt class="descname">recd_names</tt><big>(</big><em>names</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.recd_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.recd_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when received NAMES command from server.</p>
+<p>Call OnUpdateContactList method of gui with arguments:
+names - list of online users</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.recd_ok">
+<tt class="descname">recd_ok</tt><big>(</big><em>arg</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.recd_ok"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.recd_ok" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when received OK command from server.</p>
+<p>Callback &#8216;OK&#8217; to self.ok_defer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.recd_service_msg">
+<tt class="descname">recd_service_msg</tt><big>(</big><em>arg</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.recd_service_msg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.recd_service_msg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when received SERVICE command wrom server.</p>
+<p>Call OnServiceChatView method of gui with arguments:
+sender
+service text</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.send_msg">
+<tt class="descname">send_msg</tt><big>(</big><em>line</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.send_msg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.send_msg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send broadcast message to server if destination unknown.
+Send direct message if line starts with &#64;nickname and nickname
+contains in list of online users.</p>
+<dl class="docutils">
+<dt><em>atributes:</em></dt>
+<dd>line</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="chatprotocol.ChatProtocol.signin">
+<tt class="descname">signin</tt><big>(</big><em>nick</em>, <em>password</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.signin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.signin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send NEW message to server with nick and 
+password as arguments to register new user.
+Add callbacks self.on_login and errback self.on_login_error to
+self.ok_defer to catch Ok or Error message from server.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Chat Protocol Documentation</a><ul>
+<li><a class="reference internal" href="#module-chatprotocol">chatprotocol</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="client.html"
+                        title="previous chapter">Client Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="gui.html"
+                        title="next chapter">Chat GUI Documentation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/protocol.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="gui.html" title="Chat GUI Documentation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="client.html" title="Client Documentation"
+             >previous</a> |</li>
+        <li><a href="index.html">chat v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, M. Verzakov.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

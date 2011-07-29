@@ -44,8 +44,12 @@ class ChatProtocol(LineOnlyReceiver):
         self.factory.registerNewUser(self)
 
     def connectionLost(self, reason):
+<<<<<<< HEAD
         """Callback, calls each time when client disconnected from server"""
         base_cmd.closeProtocol(self)
+=======
+        #base_cmd.closeProtocol(self)
+>>>>>>> 5e48ec5a98e3b00db6de773747e3948e82abf0a6
         self.factory.destroyUser(self)
 
     def lineReceived(self, line):
@@ -113,4 +117,3 @@ class ChatProtocolFactory(ServerFactory):
     def destroyUser(self, protocol):
         """Method deletes protocol from connected client's protocols"""
         self.clientProtocols.remove(protocol)
-
