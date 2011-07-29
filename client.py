@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """Main module to run client. 
 Create wx application and run reactor.
 """

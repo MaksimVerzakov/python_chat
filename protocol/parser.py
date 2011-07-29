@@ -1,5 +1,4 @@
-"""
-A Client-Server commands parser module
+"""A Client-Server commands parser module
 
 Export functions :
 
@@ -12,22 +11,21 @@ import unittest
 
 
 
-PTRN = r"""
+PTRN = r'''
             (?:!(\S+)\ )?    # prefix part
             ([A-Z]+)\ ?    # command part
             ((?:[^ \t\n\r\f\v']\S*\ ?)*)    # parametrs
             ('[^']*')?    # text
-        """
+        '''
 
 REGEXP = re.compile(PTRN, re.VERBOSE)
 
 def parsingCommand(line):
-    """
-       Return the tuple (prefix, cmd, args) - parts of string;
-       but if string don't satisfy the command-pattern, 
-       will return (None, None, None)
+    """Return the tuple (prefix, cmd, args) - parts of string;
+    but if string don't satisfy the command-pattern, 
+    will return (None, None, None)
        
-       Arguments :
+    Arguments :
        
        line -- the input data string
        

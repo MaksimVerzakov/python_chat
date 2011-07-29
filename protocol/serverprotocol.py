@@ -19,7 +19,7 @@ class ChatProtocol(LineOnlyReceiver):
         self.factory.registerNewUser(self)
 
     def connectionLost(self, reason):
-        base_cmd.closeProtocol(self)
+        #base_cmd.closeProtocol(self)
         self.factory.destroyUser(self)
 
     def lineReceived(self, line):
@@ -48,5 +48,4 @@ class ChatProtocolFactory(ServerFactory):
         self.clientProtocols.append(protocol)
 
     def destroyUser(self, protocol):
-        self.clientProtocols.remove(protocol)
-
+        self.clientProtocols.remove(protocol)    

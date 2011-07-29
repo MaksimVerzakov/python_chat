@@ -1,0 +1,290 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>chatview &mdash; chat v1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="chat v1.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">chat v1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for chatview</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">import</span> <span class="nn">wx</span>
+<span class="kn">import</span> <span class="nn">wx.lib.newevent</span>
+
+<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span>
+
+<span class="kn">from</span> <span class="nn">settingsdlg</span> <span class="kn">import</span> <span class="n">SettingsDlg</span>
+
+<span class="n">ErrorEvent</span><span class="p">,</span> <span class="n">EVT_ERROR_EVENT</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">newevent</span><span class="o">.</span><span class="n">NewEvent</span><span class="p">()</span>
+<span class="n">MsgEvent</span><span class="p">,</span> <span class="n">EVT_NEW_MSG_EVENT</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">newevent</span><span class="o">.</span><span class="n">NewEvent</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="ChatView"><a class="viewcode-back" href="../gui.html#chatview.ChatView">[docs]</a><span class="k">class</span> <span class="nc">ChatView</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">Frame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main Frame that contains text controls for display chat and for </span>
+<span class="sd">    add message to chat. Also it contains listbox where are all</span>
+<span class="sd">    online users.  </span>
+<span class="sd">    &quot;&quot;&quot;</span>  
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Override __init__ of wx.Frame.           </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ChatView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> 
+            <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">390</span><span class="p">,</span> <span class="mi">350</span><span class="p">))</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">InitUI</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Centre</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">users</span> <span class="o">=</span> <span class="p">{}</span>             
+        
+<div class="viewcode-block" id="ChatView.InitUI"><a class="viewcode-back" href="../gui.html#chatview.ChatView.InitUI">[docs]</a>    <span class="k">def</span> <span class="nf">InitUI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create all controls to a frame.</span>
+<span class="sd">        Add binds to catch events</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">toolbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CreateToolBar</span><span class="p">()</span>
+        <span class="n">ID_SETTINGSTOOL</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">NewId</span><span class="p">()</span>
+        <span class="n">toolbar</span><span class="o">.</span><span class="n">AddLabelTool</span><span class="p">(</span><span class="n">ID_SETTINGSTOOL</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span>
+                             <span class="n">wx</span><span class="o">.</span><span class="n">Bitmap</span><span class="p">(</span><span class="s">&#39;GUI/icons/settings_button.png&#39;</span><span class="p">))</span>
+        <span class="n">toolbar</span><span class="o">.</span><span class="n">Realize</span><span class="p">()</span>
+                    
+        <span class="n">splitter</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">SplitterWindow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">left_panel</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Panel</span><span class="p">(</span><span class="n">splitter</span><span class="p">)</span>
+
+        <span class="n">font</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">SystemSettings_GetFont</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">SYS_SYSTEM_FONT</span><span class="p">)</span>
+        <span class="n">font</span><span class="o">.</span><span class="n">SetPointSize</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+        
+        <span class="n">chatbox</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">BoxSizer</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">VERTICAL</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewctrl</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">TextCtrl</span><span class="p">(</span><span class="n">left_panel</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">wx</span><span class="o">.</span><span class="n">TE_MULTILINE</span><span class="o">|</span>
+                                    <span class="n">wx</span><span class="o">.</span><span class="n">TE_READONLY</span><span class="p">)</span>
+        <span class="n">chatbox</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viewctrl</span><span class="p">,</span> <span class="n">proportion</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="n">wx</span><span class="o">.</span><span class="n">EXPAND</span><span class="o">|</span><span class="n">wx</span><span class="o">.</span><span class="n">LEFT</span><span class="o">|</span>
+                    <span class="n">wx</span><span class="o">.</span><span class="n">BOTTOM</span><span class="p">,</span> <span class="n">border</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+                                
+        <span class="n">chat_send_box</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">BoxSizer</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">HORIZONTAL</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">tc</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">TextCtrl</span><span class="p">(</span><span class="n">left_panel</span><span class="p">)</span>
+        <span class="n">chat_send_box</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tc</span><span class="p">,</span> <span class="n">proportion</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="n">sendbtn</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">left_panel</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">NewId</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s">&#39;Send&#39;</span><span class="p">,</span>
+                            <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="mi">27</span><span class="p">))</span>
+        <span class="n">chat_send_box</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">sendbtn</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="n">wx</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span> <span class="n">border</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        
+        <span class="n">chatbox</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">chat_send_box</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="n">wx</span><span class="o">.</span><span class="n">EXPAND</span><span class="o">|</span><span class="n">wx</span><span class="o">.</span><span class="n">BOTTOM</span><span class="o">|</span><span class="n">wx</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span>
+                    <span class="n">border</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">left_panel</span><span class="o">.</span><span class="n">SetSizer</span><span class="p">(</span><span class="n">chatbox</span><span class="p">)</span>
+        
+        <span class="n">right_panel</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Panel</span><span class="p">(</span><span class="n">splitter</span><span class="p">)</span>
+        
+        <span class="n">listbox</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">BoxSizer</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">VERTICAL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listctr</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">ListBox</span><span class="p">(</span><span class="n">right_panel</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">130</span><span class="p">),</span>
+                                  <span class="p">[],</span> <span class="n">wx</span><span class="o">.</span><span class="n">LB_SINGLE</span><span class="p">)</span> 
+        <span class="n">listbox</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">listctr</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="n">wx</span><span class="o">.</span><span class="n">EXPAND</span><span class="o">|</span><span class="n">wx</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">,</span> <span class="n">border</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">right_panel</span><span class="o">.</span><span class="n">SetSizer</span><span class="p">(</span><span class="n">listbox</span><span class="p">)</span>
+        
+        <span class="n">splitter</span><span class="o">.</span><span class="n">SetMinimumPaneSize</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">splitter</span><span class="o">.</span><span class="n">SplitVertically</span><span class="p">(</span><span class="n">left_panel</span><span class="p">,</span> <span class="n">right_panel</span><span class="p">)</span>  
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_LISTBOX_DCLICK</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OnListBoxClick</span><span class="p">,</span>
+                  <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">listctr</span><span class="o">.</span><span class="n">GetId</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_TOOL</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OnSettings</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">ID_SETTINGSTOOL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_BUTTON</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OnSend</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">sendbtn</span><span class="o">.</span><span class="n">GetId</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_CLOSE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OnClose</span><span class="p">)</span>  
+        
+        <span class="n">accel_tbl</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">AcceleratorTable</span><span class="p">([(</span><span class="n">wx</span><span class="o">.</span><span class="n">ACCEL_CTRL</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="n">sendbtn</span><span class="o">.</span><span class="n">GetId</span><span class="p">())])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetAcceleratorTable</span><span class="p">(</span><span class="n">accel_tbl</span><span class="p">)</span>            
+        </div>
+<div class="viewcode-block" id="ChatView.OnSend"><a class="viewcode-back" href="../gui.html#chatview.ChatView.OnSend">[docs]</a>    <span class="k">def</span> <span class="nf">OnSend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called when user pushes Send button.</span>
+<span class="sd">        If message isn&#39;t empty call send_msg method of protocol</span>
+<span class="sd">        and clear text control.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tc</span><span class="o">.</span><span class="n">IsEmpty</span><span class="p">()):</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span><span class="o">.</span><span class="n">send_msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tc</span><span class="o">.</span><span class="n">GetValue</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tc</span><span class="o">.</span><span class="n">Clear</span><span class="p">()</span>        
+        </div>
+<div class="viewcode-block" id="ChatView.OnUpdateContactList"><a class="viewcode-back" href="../gui.html#chatview.ChatView.OnUpdateContactList">[docs]</a>    <span class="k">def</span> <span class="nf">OnUpdateContactList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called when server reports about changings in list of online users</span>
+<span class="sd">        Update dictionary of online users and set random colors to new users.</span>
+<span class="sd">         </span>
+<span class="sd">        *atributes:*</span>
+<span class="sd">            names  list of online users</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listctr</span><span class="o">.</span><span class="n">Clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listctr</span><span class="o">.</span><span class="n">AppendItems</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+        <span class="n">users</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">)</span><span class="o">&amp;</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">):</span>
+            <span class="n">users</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+            <span class="n">users</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">users</span> <span class="o">=</span> <span class="n">users</span>
+        </div>
+<div class="viewcode-block" id="ChatView.OnListBoxClick"><a class="viewcode-back" href="../gui.html#chatview.ChatView.OnListBoxClick">[docs]</a>    <span class="k">def</span> <span class="nf">OnListBoxClick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called when user clicks on nickname in listbox.</span>
+<span class="sd">         </span>
+<span class="sd">        Add nickname to textbox to send direct message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">GetSelection</span><span class="p">()</span>
+        <span class="n">nick</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listctr</span><span class="o">.</span><span class="n">GetString</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tc</span><span class="o">.</span><span class="n">AppendText</span><span class="p">(</span><span class="s">&#39;@</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">nick</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="ChatView.OnUpdateChatView"><a class="viewcode-back" href="../gui.html#chatview.ChatView.OnUpdateChatView">[docs]</a>    <span class="k">def</span> <span class="nf">OnUpdateChatView</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called when server reports about adding new message to chat.</span>
+
+<span class="sd">        Add time, sender name, destination name (if necessary) to view text control.</span>
+
+<span class="sd">        *atributes:*</span>
+<span class="sd">            sender        nickname of person who send message</span>
+<span class="sd">            destination   nickname of person which should received message</span>
+<span class="sd">                          or &#39;*&#39; if it&#39;s broadcast message</span>
+<span class="sd">            text          message itself</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msgtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%H:%M:%S&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="n">destination</span> <span class="o">==</span> <span class="s">&#39;*&#39;</span><span class="p">:</span>
+            <span class="n">destination</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>            
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;(</span><span class="si">%s</span><span class="s">) </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">msgtime</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewctrl</span><span class="o">.</span><span class="n">GetLastPosition</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewctrl</span><span class="o">.</span><span class="n">AppendText</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="n">colorLen</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">10</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="n">rgb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewctrl</span><span class="o">.</span><span class="n">SetStyle</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">colorLen</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">TextAttr</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
+        
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">colorLen</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">colorLen</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">sender</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewctrl</span><span class="o">.</span><span class="n">SetStyle</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">colorLen</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">TextAttr</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
+        
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">colorLen</span> <span class="o">+</span> <span class="mi">2</span>
+        <span class="n">colorLen</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="n">rgb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewctrl</span><span class="o">.</span><span class="n">SetStyle</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">colorLen</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">TextAttr</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
+        </div>
+<div class="viewcode-block" id="ChatView.OnServiceChatView"><a class="viewcode-back" href="../gui.html#chatview.ChatView.OnServiceChatView">[docs]</a>    <span class="k">def</span> <span class="nf">OnServiceChatView</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called when server reports about service message.</span>
+<span class="sd">           </span>
+<span class="sd">        Add sender name and service message to view text control.</span>
+
+<span class="sd">        *atributes:*</span>
+<span class="sd">            sender    nickname of person who made action</span>
+<span class="sd">            text      message itself</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewctrl</span><span class="o">.</span><span class="n">GetLastPosition</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewctrl</span><span class="o">.</span><span class="n">AppendText</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">colorLen</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">sender</span><span class="p">)</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="n">rgb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewctrl</span><span class="o">.</span><span class="n">SetStyle</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">colorLen</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">TextAttr</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
+             </div>
+<div class="viewcode-block" id="ChatView.OnSettings"><a class="viewcode-back" href="../gui.html#chatview.ChatView.OnSettings">[docs]</a>    <span class="k">def</span> <span class="nf">OnSettings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called when user pushes Settings button.</span>
+<span class="sd">         </span>
+<span class="sd">        Create SettingsDlg from settingsdlg.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Dlg</span> <span class="o">=</span> <span class="n">SettingsDlg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;Settings&#39;</span><span class="p">)</span>
+        <span class="n">Dlg</span><span class="o">.</span><span class="n">ShowModal</span><span class="p">()</span>
+        <span class="n">Dlg</span><span class="o">.</span><span class="n">Destroy</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="ChatView.OnClose"><a class="viewcode-back" href="../gui.html#chatview.ChatView.OnClose">[docs]</a>    <span class="k">def</span> <span class="nf">OnClose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called when user close the frame.</span>
+<span class="sd">           </span>
+<span class="sd">        Send quit message to server and destoy self.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span><span class="o">.</span><span class="n">on_quit</span><span class="p">(</span><span class="s">&#39;goodbye fellas&#39;</span><span class="p">)</span>
+        <span class="n">reactor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">chat v1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, M. Verzakov.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
