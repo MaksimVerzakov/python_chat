@@ -8,6 +8,9 @@ Exported Classes:
     ChatClientFactory -- derives twisted.internet.protocol.ClientFactory 
 
 """
+import sys
+sys.path.append('/home/maxim/projects/python-chat/python_chat/')
+
 from twisted.protocols.basic import LineReceiver
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor
