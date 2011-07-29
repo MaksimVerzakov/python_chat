@@ -33,17 +33,29 @@ class command:
         commands[self.name] = func
         
 class ExClass(BaseException):
-    def __init__(self, msg=''):
+    """Exception class for any command handler function exceptions"""
+    
+    def __init__(self):
+        """Set error message for exception"""
         self.msg = self.__class__.__name__
     def __str__(self):
+        """Print exception error info"""
         return self.msg
         
-class ExUserExist(ExClass):
-    pass
-    
 class ExIncorrectData(ExClass):
+    """
+    Exception class for err_incorrect_data error in 
+    CONNECT and NICK and NEW commands
+    
+    """
     pass
     
+class ExUserExist(ExClass):
+    """
+    Exception class for err_user_exist error in 
+    NEW and NICK commands
+    """
+    pass
 
 @command('CONNECT')
 def connectAction(protocol, prefix, args):
