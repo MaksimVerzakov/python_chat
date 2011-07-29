@@ -5,13 +5,10 @@ from errordlg import error_dlg
 
 
 class CreateNewDlgView(wx.Dialog):
-    """
-       Create dialog frame to get information for new user.
-    """    
+    """Create dialog frame to get information for new user."""    
     def __init__(self, parent, id, title):
-        """
-           Override __init__ of wx.Dialod.
-           Create all controls and binds to catch events.
+        """Override __init__ of wx.Dialod.
+        Create all controls and binds to catch events.
         """
         super(CreateNewDlgView, self).__init__(self, parent, id,
               title, size=(300, 160))
@@ -45,11 +42,10 @@ class CreateNewDlgView(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.OnCreate, id=create_btn.GetId())          
     
     def OnCreate(self, event):
-        """
-           Called when user pushes Create bitton.
+        """Called when user pushes Create bitton.
            
-           If passwords didn't match create error_dlg from errdlg.
-           Call signin method of protocol.            
+        If passwords didn't match create error_dlg from errdlg.
+        Call signin method of protocol.            
         """
         nick = self._nick.GetValue()
         password1 = self._pass1.GetValue()

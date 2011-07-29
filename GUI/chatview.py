@@ -1,3 +1,6 @@
+"""
+Exports class Chatview
+"""
 import time
 import random
 
@@ -103,7 +106,8 @@ class ChatView(wx.Frame):
         Update dictionary of online users and set random colors to new users.
          
         *atributes:*
-            names  list of online users
+            names -- list of online users
+
         """
         self.listctr.Clear()
         self.listctr.AppendItems(names)
@@ -128,16 +132,17 @@ class ChatView(wx.Frame):
         self.tc.AppendText('@%s' % nick)
         
     def OnUpdateChatView(self, sender, destination, text):
-        """
-        Called when server reports about adding new message to chat.
+        """Called when server reports about adding new message to chat.
 
         Add time, sender name, destination name (if necessary) to view text control.
+        
+        *atributes*:
+            sender -- nickname of person who send message
 
-        *atributes:*
-            sender        nickname of person who send message
-            destination   nickname of person which should received message
-                          or '*' if it's broadcast message
-            text          message itself
+            destination -- nickname of person which should received message or '*' if it's broadcast message
+
+            text -- message itself
+
         """
         msgtime = time.strftime('%H:%M:%S', time.localtime(time.time()))
         if destination == '*':
@@ -168,8 +173,9 @@ class ChatView(wx.Frame):
         Add sender name and service message to view text control.
 
         *atributes:*
-            sender    nickname of person who made action
-            text      message itself
+            sender -- nickname of person who made action
+
+            text -- message itself
         """
         msg = '%s %s\n' % (sender, text)
         pos = self.viewctrl.GetLastPosition()
@@ -196,4 +202,4 @@ class ChatView(wx.Frame):
         Send quit message to server and destoy self.
         """
         self.protocol.on_quit('goodbye fellas')
-        self.Destroy()
+        reactor.stop()

@@ -1,13 +1,10 @@
 import wx
 
 class SettingsDlg(wx.Dialog):
-    """
-       Dialog for getting new nickname.
-    """ 
+    """Dialog for getting new nickname.""" 
     def __init__(self, parent, id, title):
-        """
-           Create dialog frame and all controls and buttons.
-           Add binds to catch events.
+        """Create dialog frame and all controls and buttons.
+        Add binds to catch events.
         """
         wx.Dialog.__init__(self, parent, id, title, size=(250, 100))
         self.protocol = parent.protocol
@@ -35,10 +32,9 @@ class SettingsDlg(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.OnChange, id=connectbtn.GetId())        
     
     def OnChange(self, event):
-        """
-           Called when user pushes Change button.
+        """Called when user pushes Change button.
            
-           Call chang_nick method of protocol.
+        Call chang_nick method of protocol.
         """
         nick = self._nick.GetValue()
         self.protocol.change_nick(nick)

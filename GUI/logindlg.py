@@ -6,12 +6,9 @@ from twisted.internet import reactor
 from createnewdlg import CreateNewDlgView
 
 class LoginDlgView(wx.Dialog):
-    """
-    Dialog for getting nickname and password for authorization on server.
-    """
+    """Dialog for getting nickname and password for authorization on server."""
     def __init__(self, parent, id, title):
-        """
-        Create dialog frame and all controls and buttons.
+        """Create dialog frame and all controls and buttons.
         Add binds to catch events.
         """
         super(LoginDlgView, self).__init__(parent, id, title, size=(300, 140))
@@ -51,8 +48,7 @@ class LoginDlgView(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.OnLogin, id=login_btn.GetId())  
                 
     def OnNewUser(self, event):
-        """
-        Called when user pushes Create new button.
+        """Called when user pushes Create new button.
         Create CreateNewDlgView from createnewdlgview.
         """
         cDlg = CreateNewDlgView(self.GetParent(), -1, 'CreateNew')
@@ -62,8 +58,7 @@ class LoginDlgView(wx.Dialog):
         cDlg.Destroy()        
         
     def OnLogin(self, event):
-        """
-        Called when user pushes Login button.
+        """Called when user pushes Login button.
         Call login method of protocol.
         """
         nick = self._nick.GetValue()

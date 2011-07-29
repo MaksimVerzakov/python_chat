@@ -7,10 +7,15 @@ DESCRIPTION
 
 PACKAGE CONTENTS
     chatview
+
     connectiondlg
+
     errordlg
+
     logindlg
+
     createnewdlg
+
     settingsdlg  
 
 """
