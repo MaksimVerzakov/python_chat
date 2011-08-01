@@ -80,19 +80,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">commands</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
         </div>
-<span class="k">class</span> <span class="nc">ExClass</span><span class="p">(</span><span class="ne">BaseException</span><span class="p">):</span>
+<div class="viewcode-block" id="ExClass"><a class="viewcode-back" href="../protocol.html#base_cmd.ExClass">[docs]</a><span class="k">class</span> <span class="nc">ExClass</span><span class="p">(</span><span class="ne">BaseException</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span>
-        
-<span class="k">class</span> <span class="nc">ExUserExist</span><span class="p">(</span><span class="n">ExClass</span><span class="p">):</span>
+        </div>
+<div class="viewcode-block" id="ExUserExist"><a class="viewcode-back" href="../protocol.html#base_cmd.ExUserExist">[docs]</a><span class="k">class</span> <span class="nc">ExUserExist</span><span class="p">(</span><span class="n">ExClass</span><span class="p">):</span>
+    <span class="k">pass</span>
+    </div>
+<div class="viewcode-block" id="ExIncorrectData"><a class="viewcode-back" href="../protocol.html#base_cmd.ExIncorrectData">[docs]</a><span class="k">class</span> <span class="nc">ExIncorrectData</span><span class="p">(</span><span class="n">ExClass</span><span class="p">):</span>
     <span class="k">pass</span>
     
-<span class="k">class</span> <span class="nc">ExIncorrectData</span><span class="p">(</span><span class="n">ExClass</span><span class="p">):</span>
-    <span class="k">pass</span>
-    
-
+</div>
 <span class="nd">@command</span><span class="p">(</span><span class="s">&#39;CONNECT&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">connectAction</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>

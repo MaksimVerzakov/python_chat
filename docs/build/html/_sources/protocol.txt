@@ -15,3 +15,27 @@ chatprotocol
 .. automodule:: chatprotocol
    :members:
 
+serverprotocol
+--------------
+
+.. automodule:: serverprotocol
+   :members:
+
+base_cmd
+--------
+
+.. automodule:: base_cmd
+   :members:
+
+accounts_class
+--------------
+
+.. automodule:: accounts_class
+   :members:
+
+
+parser
+------
+
+.. automodule:: parser
+   :members:

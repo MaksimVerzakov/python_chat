@@ -11,6 +11,7 @@ Chat Documentation
    :maxdepth: 2
 
    client
+   server
    protocol
    gui
    
