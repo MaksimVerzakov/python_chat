@@ -339,4 +339,13 @@ def closeProtocol(protocol, arg=''):
         sendServiceMessage(protocol.factory, protocol.nickname, msg)
         refreshNicks(protocol.factory)
         
+import unittest
+
+class DemoTest(unittest.TestCase):
+    def test_passes(self):
+        pass
+    def test_fails(self):
+        self.fail("I failed.")
+
+unittest.main()
 

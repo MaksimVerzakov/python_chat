@@ -9,9 +9,9 @@ chatProtocolFactory -- this class is inheritor of
 """
 from twisted.internet.protocol import ServerFactory 
 from twisted.protocols.basic import LineOnlyReceiver 
-import base_cmd 
-import accounts_class
-import parser
+import basecmd 
+import accountsclass
+import myparser
 
 class ExUnknownCommand(BaseException):
     """Class for exception which raises when server got incorrect command"""
@@ -46,7 +46,7 @@ class ChatProtocol(LineOnlyReceiver):
 
     def connectionLost(self, reason):
         """Callback, calls each time when client disconnected from server"""
-        base_cmd.closeProtocol(self)
+        basecmd.closeProtocol(self)
         self.factory.destroyUser(self)
 
     def lineReceived(self, line):
@@ -58,14 +58,14 @@ class ChatProtocol(LineOnlyReceiver):
         If command is not correct, function raises exception
         
         """
-        prefix, cmd, args = parser.parsingCommand(line)
+        prefix, cmd, args = myparser.parsingCommand(line)
         try:
-            if cmd not in base_cmd.commands:
+            if cmd not in basecmd.commands:
                 raise ExUnknownCommand
-            base_cmd.commands[cmd](self, prefix, args)
+            basecmd.commands[cmd](self, prefix, args)
         except ExUnknownCommand, error:
             print error
-        except base_cmd.ExClass, error:
+        except basecmd.ExClass, error:
             print error
             
 class ChatProtocolFactory(ServerFactory): 
@@ -108,7 +108,7 @@ class ChatProtocolFactory(ServerFactory):
         """Set up default server configuration"""
         self.clientProtocols = []
         self.activeUsers = []
-        self.accountsData = accounts_class.AccountsClass(self.filename)
+        self.accountsData = accountsclass.AccountsClass(self.filename)
 
     def registerNewUser(self, protocol):
         """Method adds protocol to other connected client's protocols"""

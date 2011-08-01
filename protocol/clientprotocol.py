@@ -20,7 +20,7 @@ from twisted.internet.error import ConnectionDone
 from GUI.chatview import ChatView
 from GUI.logindlg import LoginDlgView
 from GUI.errordlg import error_dlg
-import parser
+import myparser
 
  
 class ChatProtocol(LineReceiver):
@@ -46,7 +46,7 @@ class ChatProtocol(LineReceiver):
         """Parse line to tuple of prefix, command and message.
         Call a function due to command.
         """
-        msg = parser.parsingCommand(line)
+        msg = myparser.parsingCommand(line)
         case = {'OK':self.recd_ok,
                 'ERROR':self.recd_error,
                 'MSG':self.recd_msg,

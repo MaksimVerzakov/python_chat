@@ -9,7 +9,7 @@ wxreactor.install()
 from twisted.internet import reactor
 
 from GUI.connectiondlg import ConnectionDlgView
-from protocol.chatprotocol import ChatClientFactory
+from protocol.clientprotocol import ChatClientFactory
 
 class MyApp(wx.App):
     """Class MyApp derived from wx.App."""
