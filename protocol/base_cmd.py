@@ -3,13 +3,13 @@ A Server Protocol library, contains a command handlers
 
 Export data :
 
-commands -- kind of {COMMAND: handlerFunctionName} dictionary
-            that links each command with her handler function
+    commands -- kind of {COMMAND: handlerFunctionName} dictionary
+                that links each command with her handler function
 
 Export functions :
 
-closeProtocol -- this procedure makes an actions which must be made
-                 when user leaves the Server
+    closeProtocol -- this procedure makes an actions which must be made
+                     when user leaves the Server
 
 """
 
@@ -65,10 +65,11 @@ def connectAction(protocol, prefix, args):
     
     Arguments : 
     
-    prefix -- None, unused argument
-    args -- list with two string-type elements 
-       first one is the login of connected user
-       second one is the password for user login
+        prefix -- None, unused argument
+
+        args -- list with two string-type elements 
+           first one is the login of connected user
+           second one is the password for user login
     
     Result :
     
@@ -98,22 +99,23 @@ def newAction(protocol, prefix, args):
     
     Arguments : 
     
-    prefix -- None, unused argument
-    args -- list with two string-type elements 
-       first one is the login of new user's account
-       second one is the password for this account
+        prefix -- None, unused argument
+
+        args -- list with two string-type elements 
+                first one is the login of new user's account
+                second one is the password for this account
     
     Result :
     
-    - if account was created successfully
-         function send the "OK" message to client protocol
-         and then user will entered to the chat
-         for all users in chat will send service-information message
-                                    and refreshed their users-list
-    - else 
-         function send any ErrorMessage to client protocol
-         and also raise exception
-         user doesn't enter the chat
+        - if account was created successfully
+             function send the "OK" message to client protocol
+             and then user will entered to the chat
+             for all users in chat will send service-information message
+                                        and refreshed their users-list
+        - else 
+             function send any ErrorMessage to client protocol
+             and also raise exception
+             user doesn't enter the chat
     
     """
     if len(args[0]) > MAX_NICK_LENGHT or ' ' in args[0]:
@@ -135,20 +137,21 @@ def nickAction(protocol, prefix, args):
     
     Arguments : 
     
-    prefix -- type-string current user nick
-    args -- list with one string-type element
-        new_nick that user want to use
+        prefix -- type-string current user nick
+
+        args -- list with one string-type element
+            new_nick that user want to use
     
     Result :
     
-    - if user nick was changed successfully
-         function send the "OK" message to client protocol
-         for all users in chat will send service-information message
-                                    and refreshed their users-list
-    - else 
-         function send any ErrorMessage to client protocol
-         and also raise exception
-         user's nick doesn't changes
+        - if user nick was changed successfully
+             function send the "OK" message to client protocol
+             for all users in chat will send service-information message
+                                        and refreshed their users-list
+        - else 
+             function send any ErrorMessage to client protocol
+             and also raise exception
+             user's nick doesn't changes
     
     """
     if prefix != args[0]:
@@ -172,12 +175,13 @@ def namesAction(protocol, prefix=0, args=0):
     
     Arguments : 
     
-    prefix -- string-type user nick, unused parametr
-    args -- None, unused parametr
+        prefix -- string-type user nick, unused parametr
+
+        args -- None, unused parametr
     
     Result :
     
-    Server send to client list of all users nickanames
+        Server send to client list of all users nickanames
     
     """
     nicks = []
@@ -193,16 +197,17 @@ def msgAction(protocol, prefix, args):
     
     Arguments : 
     
-    prefix -- string-type user nick
-    args -- list with two string-type elements 
-       first one is the destination of user's message :
-                 * for all users or username of targer user
-       second one is the messae text concluded in '' 
-                  ('text_message' style)
+        prefix -- string-type user nick
+
+        args -- list with two string-type elements 
+           first one is the destination of user's message :
+                     * for all users or username of targer user
+           second one is the messae text concluded in '' 
+                      ('text_message' style)
     
     Result :
     
-    Server send this message (in another form) to all users
+        Server send this message (in another form) to all users
     
     """
     if protocol.nickname:
@@ -218,15 +223,16 @@ def quitAction(protocol, prefix, args):
     
     Arguments : 
     
-    prefix -- string-type user nick
-    args -- list with one string-type element 
-       element is a 'goodbye'-message for other users
+        prefix -- string-type user nick
+
+        args -- list with one string-type element 
+           element is a 'goodbye'-message for other users
     
     Result :
     
-    Server send service to all users
-    and call procedure that makes an actions 
-    which must be made when user leaves the Server
+        Server send service to all users
+        and call procedure that makes an actions 
+        which must be made when user leaves the Server
     
     """
     if not protocol.nickname:
@@ -247,16 +253,21 @@ def successConnect(protocol, nick):
     
     Arguments :
     
-    protocol -- the protocol of authorized user
-    nick -- string-type user's nick
+        protocol -- the protocol of authorized user
+
+        nick -- string-type user's nick
     
     Result :
     
-    -set the user nick
-    -send 'OK' message for client 
-    -allows using the chat for user
-    -send service-information message to other users in chat
-    -refresh users-lists for all active users
+        -set the user nick
+
+        -send 'OK' message for client 
+
+        -allows using the chat for user
+
+        -send service-information message to other users in chat
+
+        -refresh users-lists for all active users
     
     """
     protocol.nickname = nick
@@ -271,9 +282,11 @@ def sendServiceMessage(factory, nick, text):
     
     Arguments :
     
-    factory -- the server protocol factory that contains info of activeusers
-    nick -- string-type user nick which is object of service information
-    text -- string-type service message
+        factory -- the server protocol factory that contains info of activeusers
+
+        nick -- string-type user nick which is object of service information
+
+        text -- string-type service message
     
     """
     for user in factory.activeUsers:
@@ -286,9 +299,10 @@ def sendErrorMessage(protocol, error):
     
     Arguments :
     
-    protocol -- client protocol of user-reciever error message
-    error -- string-literal error key. 
-             error message is a value of this key in error dictionary
+        protocol -- client protocol of user-reciever error message
+
+        error -- string-literal error key. 
+                 error message is a value of this key in error dictionary
     
     """
     protocol.sendLine("ERROR '%s'" %err_text[error])
@@ -305,15 +319,16 @@ def closeProtocol(protocol, arg=''):
     
     Arguments :
     
-    protocol -- client protocol of leaving user
-    arg -- string-type farewall message of leaving user
+        protocol -- client protocol of leaving user
+
+        arg -- string-type farewall message of leaving user
     
     Result :
     
-    Deacivate this user
-    Send service message to all active users
-    Refresh users-lists for all active users in chat
-    If user send farewall message it send with service message
+        Deacivate this user
+        Send service message to all active users
+        Refresh users-lists for all active users in chat
+        If user send farewall message it send with service message
     
     """
     if protocol.nickname and (protocol in protocol.factory.activeUsers):

@@ -4,7 +4,7 @@ server information about users : logins and passwords restiored in file
 
 Export classes :
 
-AccountsClass
+    AccountsClass
 
 """
 
@@ -17,9 +17,10 @@ class AccountsClass(object):
     
     Publec methods :
     
-    get_acc_list -- method returns list of strings that contains 
-                    login and password for chat user
-    add_acc -- method adds new account, restores login and password of new user
+        get_acc_list -- method returns list of strings that contains 
+                        login and password for chat user
+
+        add_acc -- method adds new account, restores login and password of new user
     
     """
     

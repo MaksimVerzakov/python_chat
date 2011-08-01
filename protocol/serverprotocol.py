@@ -29,11 +29,12 @@ class ChatProtocol(LineOnlyReceiver):
     
     nickname -- string-type user nick that used for identitification client in chat
     
-    Override methods : 
-    
-    connectionMade -- callback, calls when user connected to server
-    conectionLost -- callback, calls when user disconnected from server
-    lineReceived -- callback, calls when server received some data from user
+    Override methods :
+        connectionMade -- callback, calls when user connected to server
+
+        conectionLost -- callback, calls when user disconnected from server  
+
+        lineReceived -- callback, calls when server received some data from user
     
     """
 
@@ -44,12 +45,8 @@ class ChatProtocol(LineOnlyReceiver):
         self.factory.registerNewUser(self)
 
     def connectionLost(self, reason):
-<<<<<<< HEAD
         """Callback, calls each time when client disconnected from server"""
         base_cmd.closeProtocol(self)
-=======
-        #base_cmd.closeProtocol(self)
->>>>>>> 5e48ec5a98e3b00db6de773747e3948e82abf0a6
         self.factory.destroyUser(self)
 
     def lineReceived(self, line):
@@ -83,20 +80,23 @@ class ChatProtocolFactory(ServerFactory):
     
     Override methods : 
     
-    __init__ -- constuctor, calls one time when class is created
+        __init__ -- constuctor, calls one time when class is created
     
     Public methods :
     
-    registerNewUser --  calls when client is connected to server
-    destroyUser -- calls when client is disconnected from server
+        registerNewUser --  calls when client is connected to server
+
+        destroyUser -- calls when client is disconnected from server
     
     Example attributes :
     
-    clientProtocols -- list of connected in this time clients.
-                       Contents their protocols
-    activeUsers -- list of active in this time chat users.
-                   There are protocols of authorized clients.
-    accountsData -- example of class which realize control of users information
+        clientProtocols -- list of connected in this time clients.
+                           Contents their protocols
+
+        activeUsers -- list of active in this time chat users.
+                       There are protocols of authorized clients.
+
+        accountsData -- example of class which realize control of users information
     
     """
 
