@@ -7,7 +7,6 @@ Export classes :
     AccountsClass
 
 """
-
 class AccountsClass(object):
     """
     Realize simple interface for work with
@@ -25,14 +24,15 @@ class AccountsClass(object):
     """
     
     def __init__(self, filename):
-        self.file = filename
+        self.filename = filename
         
     def get_acc_list(self):
         """
         Reads data file and returns list of strings of file
         
         """
-        accs = open(self.file) 
+
+        accs = open(self.filename) 
         acc_list = accs.readlines()
         accs.close()
         return acc_list
@@ -43,6 +43,6 @@ class AccountsClass(object):
         login and password of new user there
         
         """
-        accs = open(self.file, 'a')
+        accs = open(self.filename, 'a')
         accs.write('%s %s\n' %(lgn, psswrd))
         accs.close()
