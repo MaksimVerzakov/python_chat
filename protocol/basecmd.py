@@ -70,11 +70,13 @@ def connectAction(protocol, prefix, args):
     
     """
     users_list = protocol.factory.accountsData.get_acc_list()
-    if  badNick(args[0]) or \
-       ('%s %s\n' %(args[0], args[1])) not in users_list:
-            raise CmdException, (protocol, 'err_incorrect_data')
-    else:
-        successConnect(protocol, args[0])
+    try:
+        if  badNick(args[0]) or \
+           ('%s %s\n' %(args[0], args[1])) not in users_list:
+                raise CmdException, (protocol, 'err_incorrect_data')    
+    except:
+        raise CmdException, (protocol, 'err_incorrect_data')
+    successConnect(protocol, args[0])
         
 @command('NEW')
 def newAction(protocol, prefix, args):
@@ -102,7 +104,10 @@ def newAction(protocol, prefix, args):
              user doesn't enter the chat
     
     """
-    if badNick(args[0]):
+    try:
+        if badNick(args[0]):
+            raise CmdException, (protocol, 'err_incorrect_data')
+    except:
         raise CmdException, (protocol, 'err_incorrect_data')
     users_list = protocol.factory.accountsData.get_acc_list()
     for account in users_list:
@@ -134,18 +139,21 @@ def nickAction(protocol, prefix, args):
              and also raise exception
              user's nick doesn't changes
     
-    """
-    if prefix != args[0]:
-        if badNick(args[0]):
-            raise CmdException, (protocol, 'err_incorrect_data')
-        for user in protocol.factory.activeUsers:
-            if user.nickname == args[0]:
-                raise CmdException, (protocol, 'err_user_exist')
-        protocol.nickname = args[0]
-        sendOK(protocol)
-        sendServiceMessage(protocol.factory, prefix, 
-                           serv_text['serv_change_nick'] + args[0])
-        refreshNicks(protocol.factory)
+    """    
+    if not args or badNick(args[0]):
+        raise CmdException, (protocol, 'err_incorrect_data')
+        
+    if prefix == args[0]:
+        return
+        
+    for user in protocol.factory.activeUsers:
+        if user.nickname == args[0]:
+            raise CmdException, (protocol, 'err_user_exist')
+    protocol.nickname = args[0]
+    sendOK(protocol)
+    sendServiceMessage(protocol.factory, prefix, 
+                        serv_text['serv_change_nick'] + args[0])
+    refreshNicks(protocol.factory)
 
 @command('NAMES')
 def namesAction(protocol, prefix=0, args=0):
@@ -299,6 +307,8 @@ def closeProtocol(protocol):
         Refresh users-lists for all active users in chat
     
     """
+    if protocol not in protocol.factory.activeUsers:
+        return
     protocol.factory.activeUsers.remove(protocol)
     sendServiceMessage(protocol.factory, protocol.nickname, serv_text['serv_leave'])
     refreshNicks(protocol.factory)
@@ -308,7 +318,7 @@ def badNick(nickname):
     Check correctable of nickname. 
     Returns false if nickname is correct
     """
-    return (len(nickname) > MAX_NICK_LENGHT or ' ' in nickname)
+    return (not nickname or len(nickname) > MAX_NICK_LENGHT or ' ' in nickname)
 
 def sendOK(protocol):
     """Send OK message for client"""

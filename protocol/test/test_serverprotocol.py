@@ -28,11 +28,10 @@ class TestProtocol(TestCase):
         self.assertTrue(self.protocol in 
                                 self.protocol.factory.activeUsers)
         
-        self.protocol.lineReceived("!hey QUIT 'bye bye'")
+
+        self.protocol.transport.loseConnection()
         self.assertFalse(self.protocol in 
                                 self.protocol.factory.activeUsers)
-        
-        self.protocol.transport.loseConnection()
         self.assertFalse(self.protocol in 
                                 self.protocol.factory.clientProtocols)
         

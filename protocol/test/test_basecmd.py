@@ -56,13 +56,6 @@ class TestProtocol(TestCase):
         self.protocol.lineReceived("!hey NICK newnick")
 
         self.assertCommands(['OK', 'SERVICE', 'NAMES']*2)
-        
-    def test_quit_command(self):
-        self.protocol.lineReceived("CONNECT hey ho")
-        self.protocol.lineReceived("!hey QUIT 'message'")
-
-        self.assertFalse(self.protocol in 
-                         self.protocol.factory.activeUsers)
     
     def tearDown(self):
         self.protocol.transport.loseConnection()
