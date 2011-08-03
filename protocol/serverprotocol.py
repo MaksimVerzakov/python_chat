@@ -14,7 +14,7 @@ import basecmd
 import accountsclass
 import myparser
 
-class ExUnknownCommand(BaseException):
+class UnknownCommandException(BaseException):
     """Class for exception which raises when server got incorrect command"""
     
     def __str__(self):
@@ -31,11 +31,14 @@ class ChatProtocol(LineOnlyReceiver):
     nickname -- string-type user nick that used for identitification client in chat
     
     Override methods :
-        connectionMade -- callback, calls when user connected to server
+        connectionMade -- callback, calls when user connected 
+                            to server
 
-        conectionLost -- callback, calls when user disconnected from server  
+        conectionLost -- callback, calls when user disconnected 
+                        from server  
 
-        lineReceived -- callback, calls when server received some data from user
+        lineReceived -- callback, calls when server received 
+                        some data from user
     
     """
 
@@ -46,7 +49,9 @@ class ChatProtocol(LineOnlyReceiver):
         self.factory.registerNewUser(self)
 
     def connectionLost(self, reason):
-        """Callback, calls each time when client disconnected from server"""
+        """
+        Callback, calls each time when client disconnected from server
+        """
         basecmd.closeProtocol(self)
         self.factory.destroyUser(self)
 
@@ -58,16 +63,19 @@ class ChatProtocol(LineOnlyReceiver):
         than calls command handler fucntion
         If command is not correct, function raises exception
         
+        :param line: line that received from client
+        :type line: str
+        
         """
         prefix, cmd, args = myparser.parsingCommand(line)
         try:
             if cmd not in basecmd.commands:
-                raise ExUnknownCommand
+                raise UnknownCommandException
             basecmd.commands[cmd](self, prefix, args)
-        except ExUnknownCommand, error:
+        except UnknownCommandException, error:
             print error
-        except basecmd.ExClass, error:
-            print error
+        except basecmd.CmdException, error:
+            error()
             
 class ChatProtocolFactory(ServerFactory): 
     """
@@ -77,7 +85,8 @@ class ChatProtocolFactory(ServerFactory):
     Class data attributes :
     
     protocol -- name of the protocol class for server
-    filename -- string-type name of file where saves informations about chat users
+    filename -- string-type name of file where saves informations 
+                about chat users
     
     Override methods : 
     
@@ -97,13 +106,15 @@ class ChatProtocolFactory(ServerFactory):
         activeUsers -- list of active in this time chat users.
                        There are protocols of authorized clients.
 
-        accountsData -- example of class which realize control of users information
+        accountsData -- example of class which realize control of users 
+                        information
     
     """
 
     protocol = ChatProtocol 
     
-    filename = '/home/volodya/projects/python_chat/python_chat/ChatUsers'
+    filename='/home/volodya/projects/python_chat/python_chat/ChatUsers'
+    #filename = 'ChatUsers'
 
     def __init__(self): 
         """Set up default server configuration"""

@@ -22,14 +22,14 @@ def parsingCommand(line):
     but if string don't satisfy the command-pattern, 
     will return (None, None, None)
        
-    Arguments :
-       
-       line -- the input data string
+    :param line: the input data string
        
        Global variables using :
        
        PTRN -- the pattern of correct command
        REGEXP -- the regular expression that describes the PTRN
+    
+    :return 
        
     """
     m = REGEXP.match(line)

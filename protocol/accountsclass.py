@@ -19,7 +19,8 @@ class AccountsClass(object):
         get_acc_list -- method returns list of strings that contains 
                         login and password for chat user
 
-        add_acc -- method adds new account, restores login and password of new user
+        add_acc -- method adds new account, restores login and 
+                                                password of new user
     
     """
     
@@ -30,6 +31,8 @@ class AccountsClass(object):
         """
         Reads data file and returns list of strings of file
         
+        :returns: list of stings in file
+        
         """
 
         accs = open(self.filename) 
@@ -37,12 +40,13 @@ class AccountsClass(object):
         accs.close()
         return acc_list
         
-    def add_acc(self, lgn, psswrd):
+    def add_acc(self, login, password):
         """
         Creates new string in server data file and restores
         login and password of new user there
         
+        
         """
         accs = open(self.filename, 'a')
-        accs.write('%s %s\n' %(lgn, psswrd))
+        accs.write('%s %s\n' %(login, password))
         accs.close()
