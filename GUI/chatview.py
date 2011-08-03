@@ -194,6 +194,9 @@ class ChatView(wx.Frame):
         Dlg = SettingsDlg(self, -1, 'Settings')
         Dlg.ShowModal()
         Dlg.Destroy()
+    
+    def NewNick(self, new_nick, old_nick):
+        self.users[new_nick] = self.users[old_nick]
         
     def OnClose(self, event):
         """

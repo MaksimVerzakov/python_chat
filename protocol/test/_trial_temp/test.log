@@ -1,0 +1,8 @@
+2011-08-03 16:51:07+0700 [-] Log opened.
+2011-08-03 16:51:07+0700 [-] --> test_clientprotocol.TestProtocol.test_changenick <--
+2011-08-03 16:51:07+0700 [-] --> test_clientprotocol.TestProtocol.test_login <--
+2011-08-03 16:51:07+0700 [-] --> test_clientprotocol.TestProtocol.test_msg <--
+2011-08-03 16:51:07+0700 [-] --> test_clientprotocol.TestProtocol.test_names <--
+2011-08-03 16:51:07+0700 [-] --> test_clientprotocol.TestProtocol.test_newuser <--
+2011-08-03 16:51:07+0700 [-] --> test_clientprotocol.TestProtocol.test_send <--
+2011-08-03 16:51:07+0700 [-] --> test_clientprotocol.TestProtocol.test_smsg <--

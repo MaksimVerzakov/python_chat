@@ -3,6 +3,12 @@ import wx.lib.newevent
 
 from errordlg import error_dlg
 
+class PasswordError(BaseException):
+        
+    def __init__(self):
+        self.msg = self.__class__.__name__
+    def __str__(self):
+        return self.msg
 
 class CreateNewDlgView(wx.Dialog):
     """Create dialog frame to get information for new user."""    
@@ -10,7 +16,7 @@ class CreateNewDlgView(wx.Dialog):
         """Override __init__ of wx.Dialod.
         Create all controls and binds to catch events.
         """
-        super(CreateNewDlgView, self).__init__(self, parent, id,
+        super(CreateNewDlgView, self).__init__(parent, id,
               title, size=(300, 160))
         panel = wx.Panel(self)
         
@@ -47,14 +53,16 @@ class CreateNewDlgView(wx.Dialog):
         If passwords didn't match create error_dlg from errdlg.
         Call signin method of protocol.            
         """
-        nick = self._nick.GetValue()
-        password1 = self._pass1.GetValue()
-        password2 = self._pass2.GetValue()
-        if(password1 != password2):
-            error_dlg("Passwords didn't match")            
-            self._pass1.Clear()
-            self._pass2.Clear()
-        else:
-            print nick, password1
+        try:
+            nick = self._nick.GetValue()
+            password1 = self._pass1.GetValue()
+            password2 = self._pass2.GetValue()
+            if(password1 != password2):
+                raise PasswordError
             self.protocol.signin(nick, password1)
-        self.Close()
+            self.Close()
+            
+        except PasswordError:
+            error_dlg("Password didn't match")
+            self._pass1.Clear()
+            self._pass2.Clear()          
