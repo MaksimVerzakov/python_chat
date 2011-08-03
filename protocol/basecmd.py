@@ -50,15 +50,14 @@ def connectAction(protocol, prefix, args):
     This is the CONNECT command handler
     Calls when user want to enter the chat using his account
     
-    Arguments : 
-    
-        prefix -- None, unused argument
-
-        args -- list with two string-type elements 
+    :param protocol: protocol of connected user
+    :param prefix : None, unused argument
+    :param args: list with two string-type elements 
            first one is the login of connected user
            second one is the password for user login
+    :raises: CmdException
     
-    Result :
+     Result:
     
     - if user was authorithed successfully
          function send the "OK" message to client protocol
@@ -83,13 +82,12 @@ def newAction(protocol, prefix, args):
     This is the NEW command handler
     Calls when user want to create new account and then enter the chat
     
-    Arguments : 
-    
-        prefix -- None, unused argument
-
-        args -- list with two string-type elements 
-                first one is the login of new user's account
-                second one is the password for this account
+    :param protocol: protocol of connected user
+    :param prefix : None, unused argument
+    :param args: list with two string-type elements 
+           first one is the login of new user's account
+           second one is the password for this account
+    :raises: CmdException
     
     Result :
     
@@ -118,13 +116,12 @@ def nickAction(protocol, prefix, args):
     """
     This is the NICK command handler
     Calls when user want to change his nick for another
-    
-    Arguments : 
-    
-        prefix -- type-string current user nick
-
-        args -- list with one string-type element
-            new_nick that user want to use
+ 
+    :param prefix: current user nick
+    :type prefix: str
+    :param args: list with one string-type element
+                 new_nick that user want to use
+    :raises: CmdException
     
     Result :
     
@@ -221,6 +218,7 @@ def quitAction(protocol, prefix, args):
     if not protocol.nickname:
         return
     closeProtocol(protocol, args[0])
+    protocol.transport.loseConnection()
 
 
 err_text = {'err_incorrect_data' : 'Incorrect data',

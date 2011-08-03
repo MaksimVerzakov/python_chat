@@ -23,13 +23,15 @@ def parsingCommand(line):
     will return (None, None, None)
        
     :param line: the input data string
+    :type line: str
        
        Global variables using :
        
        PTRN -- the pattern of correct command
        REGEXP -- the regular expression that describes the PTRN
     
-    :return 
+    :returns: (prefix, cmd, args) - parts of line
+    :rtype: tuple
        
     """
     m = REGEXP.match(line)

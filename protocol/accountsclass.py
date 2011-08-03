@@ -45,6 +45,10 @@ class AccountsClass(object):
         Creates new string in server data file and restores
         login and password of new user there
         
+        :param login: login of new user
+        :type login: str
+        :param password: password for new login
+        :type password: str
         
         """
         accs = open(self.filename, 'a')
