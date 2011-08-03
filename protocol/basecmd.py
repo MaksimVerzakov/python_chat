@@ -299,6 +299,8 @@ def closeProtocol(protocol):
         Refresh users-lists for all active users in chat
     
     """
+    if protocol not in protocol.factory.activeUsers:
+        return
     protocol.factory.activeUsers.remove(protocol)
     sendServiceMessage(protocol.factory, protocol.nickname, serv_text['serv_leave'])
     refreshNicks(protocol.factory)
