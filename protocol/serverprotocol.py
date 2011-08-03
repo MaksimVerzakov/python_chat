@@ -129,5 +129,4 @@ class ChatProtocolFactory(ServerFactory):
 
     def destroyUser(self, protocol):
         """Method deletes protocol from connected client's protocols"""
-        protocol.transport.loseConnection()
         self.clientProtocols.remove(protocol)

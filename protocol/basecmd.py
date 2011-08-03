@@ -213,6 +213,7 @@ def quitAction(protocol, prefix, args):
     if not protocol.nickname:
         return
     closeProtocol(protocol, args[0])
+    protocol.transport.loseConnection()
 
 
 
@@ -226,10 +227,10 @@ serv_text = {'serv_connect' : ' is connected to our daft party',
 def successConnect(protocol, nick):
     """
     This procedure calls when user entered the chat
-    
-    
+        
     :param protocol: the protocol of authorized user
-    :param nick:string-type user's nick
+
+    :param nick: string-type user's nick
     
     Result :
     

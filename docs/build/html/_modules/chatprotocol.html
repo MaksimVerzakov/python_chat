@@ -1,0 +1,304 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>chatprotocol &mdash; chat v1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="chat v1.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">chat v1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for chatprotocol</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot; Module contains client part of classes required for connection </span>
+<span class="sd">between client and server.</span>
+
+<span class="sd">Exported Classes:</span>
+<span class="sd">    ChatProtocol -- provide receiving and sending messages between </span>
+<span class="sd">    client and server</span>
+<span class="sd"> </span>
+<span class="sd">    ChatClientFactory -- derives twisted.internet.protocol.ClientFactory </span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">twisted.protocols.basic</span> <span class="kn">import</span> <span class="n">LineReceiver</span>
+<span class="kn">from</span> <span class="nn">twisted.internet.protocol</span> <span class="kn">import</span> <span class="n">ClientFactory</span>
+<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span>
+<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">defer</span>
+<span class="kn">from</span> <span class="nn">twisted.internet.error</span> <span class="kn">import</span> <span class="n">ConnectionDone</span>
+
+<span class="kn">from</span> <span class="nn">GUI.chatview</span> <span class="kn">import</span> <span class="n">ChatView</span>
+<span class="kn">from</span> <span class="nn">GUI.logindlg</span> <span class="kn">import</span> <span class="n">LoginDlgView</span>
+<span class="kn">from</span> <span class="nn">GUI.errordlg</span> <span class="kn">import</span> <span class="n">error_dlg</span>
+<span class="kn">import</span> <span class="nn">parser</span>
+
+ 
+<div class="viewcode-block" id="ChatProtocol"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol">[docs]</a><span class="k">class</span> <span class="nc">ChatProtocol</span><span class="p">(</span><span class="n">LineReceiver</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Provide receiving and sending messages between client and server</span>
+<span class="sd">    Class ChatProtocol derives twisted.protocol.basic.LineReceiver.    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ChatProtocol.connectionMade"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.connectionMade">[docs]</a>    <span class="k">def</span> <span class="nf">connectionMade</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overrides twisted.protocol.basic.LineReceiver.connectionMade</span>
+<span class="sd">        Initialize Login Dialog to set host and port for connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok_defer</span> <span class="o">=</span> <span class="n">defer</span><span class="o">.</span><span class="n">Deferred</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login_gui</span> <span class="o">=</span> <span class="n">LoginDlgView</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;Login&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login_gui</span><span class="o">.</span><span class="n">protocol</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login_gui</span><span class="o">.</span><span class="n">ShowModal</span><span class="p">()</span>
+               </div>
+<div class="viewcode-block" id="ChatProtocol.lineReceived"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.lineReceived">[docs]</a>    <span class="k">def</span> <span class="nf">lineReceived</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overrides twisted.protocol.basic.LineReceiver.lineReceived</span>
+<span class="sd">        Send line to self.parser function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>        
+    </div>
+<div class="viewcode-block" id="ChatProtocol.parser"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.parser">[docs]</a>    <span class="k">def</span> <span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse line to tuple of prefix, command and message.</span>
+<span class="sd">        Call a function due to command.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parsingCommand</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">case</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;OK&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">recd_ok</span><span class="p">,</span>
+                <span class="s">&#39;ERROR&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">recd_error</span><span class="p">,</span>
+                <span class="s">&#39;MSG&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">recd_msg</span><span class="p">,</span>
+                <span class="s">&#39;SERVICE&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">recd_service_msg</span><span class="p">,</span>
+                <span class="s">&#39;NAMES&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">recd_names</span>
+                <span class="p">}</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">action</span><span class="p">:</span>
+            <span class="n">action</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            </div>
+<div class="viewcode-block" id="ChatProtocol.recd_ok"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.recd_ok">[docs]</a>    <span class="k">def</span> <span class="nf">recd_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called when received OK command from server.</span>
+<span class="sd">        </span>
+<span class="sd">        Callback &#39;OK&#39; to self.ok_defer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok_defer</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="s">&#39;OK&#39;</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="ChatProtocol.recd_error"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.recd_error">[docs]</a>    <span class="k">def</span> <span class="nf">recd_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called when received ERROR command from server.</span>
+<span class="sd">        </span>
+<span class="sd">        Callback error to self.ok_defer with an error description</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok_defer</span><span class="o">.</span><span class="n">errback</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">(</span><span class="n">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        </div>
+<div class="viewcode-block" id="ChatProtocol.recd_msg"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.recd_msg">[docs]</a>    <span class="k">def</span> <span class="nf">recd_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called when received MSG command from server.</span>
+<span class="sd">        Call OnUpdateChatView method of gui with arguments:</span>
+<span class="sd">        sender, destination and text message</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">OnUpdateChatView</span><span class="p">(</span><span class="n">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">arg</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">arg</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    </div>
+<div class="viewcode-block" id="ChatProtocol.recd_names"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.recd_names">[docs]</a>    <span class="k">def</span> <span class="nf">recd_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called when received NAMES command from server.</span>
+<span class="sd">        </span>
+<span class="sd">        Call OnUpdateContactList method of gui with arguments:</span>
+<span class="sd">        names - list of online users</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">OnUpdateContactList</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="ChatProtocol.recd_service_msg"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.recd_service_msg">[docs]</a>    <span class="k">def</span> <span class="nf">recd_service_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called when received SERVICE command wrom server.</span>
+<span class="sd">        </span>
+<span class="sd">        Call OnServiceChatView method of gui with arguments:</span>
+<span class="sd">        sender</span>
+<span class="sd">        service text</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">OnServiceChatView</span><span class="p">(</span><span class="n">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">arg</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        </div>
+<div class="viewcode-block" id="ChatProtocol.send_msg"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.send_msg">[docs]</a>    <span class="k">def</span> <span class="nf">send_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send broadcast message to server if destination unknown.</span>
+<span class="sd">        Send direct message if line starts with @nickname and nickname</span>
+<span class="sd">        contains in list of online users.</span>
+<span class="sd">        </span>
+<span class="sd">        *atributes:*</span>
+<span class="sd">            line</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">destination</span> <span class="o">=</span> <span class="s">&#39;*&#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span> 
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;@&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="n">destination</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:]</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;!</span><span class="si">%s</span><span class="s"> MSG </span><span class="si">%s</span><span class="s"> &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nick</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sendLine</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf8&#39;</span><span class="p">))</span>    
+    </div>
+<div class="viewcode-block" id="ChatProtocol.login"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.login">[docs]</a>    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nick</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send CONNECT message to server with nick and </span>
+<span class="sd">        password as arguments to register exicting user.</span>
+<span class="sd">        Add callbacks self.on_login and errback self.on_login_error to</span>
+<span class="sd">        self.ok_defer to catch Ok or Error message from server.</span>
+<span class="sd">        </span>
+<span class="sd">        *arguments:*</span>
+<span class="sd">            nick</span>
+
+<span class="sd">            password</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sendLine</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="s">&#39;CONNECT </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nick</span><span class="p">,</span> <span class="n">password</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nick</span> <span class="o">=</span> <span class="n">nick</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok_defer</span> <span class="o">=</span> <span class="n">defer</span><span class="o">.</span><span class="n">Deferred</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok_defer</span><span class="o">.</span><span class="n">addCallback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_login</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok_defer</span><span class="o">.</span><span class="n">addErrback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_login_error</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="ChatProtocol.on_login"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.on_login">[docs]</a>    <span class="k">def</span> <span class="nf">on_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called when recevied OK message when user login.</span>
+<span class="sd">        Create ChatView frame from GUI.chatview.</span>
+<span class="sd">        Set self as protocol to ChatView frame.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span> <span class="o">=</span> <span class="n">ChatView</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="s">&#39;Chat&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">protocol</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">Show</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span> 
+        </div>
+<div class="viewcode-block" id="ChatProtocol.on_error"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.on_error">[docs]</a>    <span class="k">def</span> <span class="nf">on_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called when recevied error message from server.</span>
+<span class="sd">        </span>
+<span class="sd">        Create error_dlg from GUI.errordlg with error message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">error_dlg</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">getErrorMessage</span><span class="p">())</span>               
+    </div>
+<div class="viewcode-block" id="ChatProtocol.on_login_error"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.on_login_error">[docs]</a>    <span class="k">def</span> <span class="nf">on_login_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called when recevied error message from server when user login.</span>
+<span class="sd">        </span>
+<span class="sd">        Create error_dlg from GUI.errordlg with error message.</span>
+<span class="sd">        Show again login dialog.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">error_dlg</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">getErrorMessage</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login_gui</span><span class="o">.</span><span class="n">ShowModal</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="ChatProtocol.signin"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.signin">[docs]</a>    <span class="k">def</span> <span class="nf">signin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nick</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send NEW message to server with nick and </span>
+<span class="sd">        password as arguments to register new user.</span>
+<span class="sd">        Add callbacks self.on_login and errback self.on_login_error to</span>
+<span class="sd">        self.ok_defer to catch Ok or Error message from server.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sendLine</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="s">&#39;NEW </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nick</span><span class="p">,</span> <span class="n">password</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nick</span> <span class="o">=</span> <span class="n">nick</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok_defer</span> <span class="o">=</span> <span class="n">defer</span><span class="o">.</span><span class="n">Deferred</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok_defer</span><span class="o">.</span><span class="n">addCallback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_login</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok_defer</span><span class="o">.</span><span class="n">addErrback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_login_error</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="ChatProtocol.change_nick"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.change_nick">[docs]</a>    <span class="k">def</span> <span class="nf">change_nick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_nick</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send NICK message to server with new nick as arguments to</span>
+<span class="sd">        change nickname.</span>
+<span class="sd">        Add callbacks on_change_nick and errback self.on_error to</span>
+<span class="sd">        self.ok_defer to catch Ok or Error message from server.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sendLine</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="s">&#39;!</span><span class="si">%s</span><span class="s"> NICK </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nick</span><span class="p">,</span> <span class="n">new_nick</span><span class="p">)))</span>
+        
+        <span class="k">def</span> <span class="nf">on_change_nick</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Save new nick as self.nick if recivied OK message&quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">users</span><span class="p">[</span><span class="n">new_nick</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">users</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">nick</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nick</span> <span class="o">=</span> <span class="n">new_nick</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok_defer</span> <span class="o">=</span> <span class="n">defer</span><span class="o">.</span><span class="n">Deferred</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok_defer</span><span class="o">.</span><span class="n">addCallback</span><span class="p">(</span><span class="n">on_change_nick</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok_defer</span><span class="o">.</span><span class="n">addErrback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_error</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="ChatProtocol.on_quit"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatProtocol.on_quit">[docs]</a>    <span class="k">def</span> <span class="nf">on_quit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bye</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called when user try to close program.</span>
+<span class="sd">        Send QUIT message to server with last message as argument.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sendLine</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="s">&quot;!</span><span class="si">%s</span><span class="s"> QUIT &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nick</span><span class="p">,</span> <span class="n">bye</span><span class="p">)))</span>
+        <span class="n">reactor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+    
+</div></div>
+<div class="viewcode-block" id="ChatClientFactory"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatClientFactory">[docs]</a><span class="k">class</span> <span class="nc">ChatClientFactory</span><span class="p">(</span><span class="n">ClientFactory</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class ChatClientFactory derives twisted.internet.protocol.ClientFactory.&quot;&quot;&quot;</span>
+    <span class="n">protocol</span> <span class="o">=</span> <span class="n">ChatProtocol</span>
+        
+<div class="viewcode-block" id="ChatClientFactory.clientConnectionFailed"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatClientFactory.clientConnectionFailed">[docs]</a>    <span class="k">def</span> <span class="nf">clientConnectionFailed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connector</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overrides twisted.internet.protocol.ClientFactory.clientConnectionFailed</span>
+<span class="sd">        Create error_dlg from GUI.errordlg with the reason why connection</span>
+<span class="sd">        was failed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">error_dlg</span><span class="p">(</span><span class="s">&#39;Connection Faild:</span><span class="se">\n</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">reason</span><span class="o">.</span><span class="n">getErrorMessage</span><span class="p">())</span>        
+</div>
+<div class="viewcode-block" id="ChatClientFactory.clientConnectionLost"><a class="viewcode-back" href="../protocol.html#chatprotocol.ChatClientFactory.clientConnectionLost">[docs]</a>    <span class="k">def</span> <span class="nf">clientConnectionLost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connector</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overrides twisted.internet.protocol.ClientFactory.clientConnectionFailed</span>
+<span class="sd">        Create error_dlg from GUI.errordlg with the reason why connection</span>
+<span class="sd">        was lost if it&#39;s not close clearly.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">reason</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">ConnectionDone</span><span class="p">):</span>
+            <span class="n">error_dlg</span><span class="p">(</span><span class="s">&#39;Connection Lost:</span><span class="se">\n</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">reason</span><span class="o">.</span><span class="n">getErrorMessage</span><span class="p">())</span>  
+ </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">chat v1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, M. Verzakov.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

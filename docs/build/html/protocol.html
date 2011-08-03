@@ -1,0 +1,624 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Chat Protocol Documentation &mdash; chat v1.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="chat v1.0 documentation" href="index.html" />
+    <link rel="next" title="Chat GUI Documentation" href="gui.html" />
+    <link rel="prev" title="Chat Server Documentation" href="server.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="gui.html" title="Chat GUI Documentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="server.html" title="Chat Server Documentation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">chat v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-protocol">
+<span id="chat-protocol-documentation"></span><h1>Chat Protocol Documentation<a class="headerlink" href="#module-protocol" title="Permalink to this headline">¶</a></h1>
+<p>Protocol package</p>
+<dl class="docutils">
+<dt>PACKAGE CONTENTS</dt>
+<dd><p class="first">clientprotocol</p>
+<p>serverprotocol</p>
+<p>basecmd</p>
+<p>accountsclass</p>
+<p class="last">myparser</p>
+</dd>
+</dl>
+<div class="section" id="module-clientprotocol">
+<span id="clientprotocol"></span><h2>clientprotocol<a class="headerlink" href="#module-clientprotocol" title="Permalink to this headline">¶</a></h2>
+<p>Module contains client part of classes required for connection 
+between client and server.</p>
+<dl class="docutils">
+<dt>Exported Classes:</dt>
+<dd><p class="first">ChatProtocol &#8211; provide receiving and sending messages between 
+client and server</p>
+<p class="last">ChatClientFactory &#8211; derives twisted.internet.protocol.ClientFactory</p>
+</dd>
+</dl>
+<dl class="class">
+<dt id="clientprotocol.ChatClientFactory">
+<em class="property">class </em><tt class="descclassname">clientprotocol.</tt><tt class="descname">ChatClientFactory</tt><a class="reference internal" href="_modules/clientprotocol.html#ChatClientFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatClientFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class ChatClientFactory derives twisted.internet.protocol.ClientFactory.</p>
+<dl class="method">
+<dt id="clientprotocol.ChatClientFactory.clientConnectionFailed">
+<tt class="descname">clientConnectionFailed</tt><big>(</big><em>connector</em>, <em>reason</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatClientFactory.clientConnectionFailed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatClientFactory.clientConnectionFailed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides twisted.internet.protocol.ClientFactory.clientConnectionFailed.
+Create error_dlg from GUI.errordlg with the reason why connection
+was failed</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clientprotocol.ChatClientFactory.clientConnectionLost">
+<tt class="descname">clientConnectionLost</tt><big>(</big><em>connector</em>, <em>reason</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatClientFactory.clientConnectionLost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatClientFactory.clientConnectionLost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides twisted.internet.protocol.ClientFactory.clientConnectionFailed.
+Create error_dlg from GUI.errordlg with the reason why connection
+was lost if it&#8217;s not close clearly.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="clientprotocol.ChatProtocol">
+<em class="property">class </em><tt class="descclassname">clientprotocol.</tt><tt class="descname">ChatProtocol</tt><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide receiving and sending messages between client and server.
+Class ChatProtocol derives twisted.protocol.basic.LineReceiver.</p>
+<dl class="method">
+<dt id="clientprotocol.ChatProtocol.change_nick">
+<tt class="descname">change_nick</tt><big>(</big><em>new_nick</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.change_nick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.change_nick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send NICK message to server with new nick as arguments to
+change nickname.
+Add callbacks on_change_nick and errback self.on_error to
+self.ok_defer to catch Ok or Error message from server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_nick</strong> &#8211; new user&#8217;s nickname</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="clientprotocol.ChatProtocol.connectionMade">
+<tt class="descname">connectionMade</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.connectionMade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.connectionMade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides twisted.protocol.basic.LineReceiver.connectionMade.
+Initialize Login Dialog to set host and port for connection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clientprotocol.ChatProtocol.lineReceived">
+<tt class="descname">lineReceived</tt><big>(</big><em>line</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.lineReceived"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.lineReceived" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides twisted.protocol.basic.LineReceiver.lineReceived.
+Send line to self.parser function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clientprotocol.ChatProtocol.login">
+<tt class="descname">login</tt><big>(</big><em>nick</em>, <em>password</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send CONNECT message to server with nick and 
+password as arguments to register exicting user.
+Add callbacks self.on_login and errback self.on_login_error to
+self.ok_defer to catch Ok or Error message from server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nick</strong> &#8211; user&#8217;s nickname</li>
+<li><strong>password</strong> &#8211; user&#8217;s password</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="clientprotocol.ChatProtocol.on_quit">
+<tt class="descname">on_quit</tt><big>(</big><em>bye</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.on_quit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.on_quit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when user try to close program.
+Send QUIT message to server with last message as argument.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>bye</strong> &#8211; broadcast message by user who quit</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="clientprotocol.ChatProtocol.send_msg">
+<tt class="descname">send_msg</tt><big>(</big><em>line</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.send_msg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.send_msg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send broadcast message to server if destination unknown.
+Send direct message if line starts with &#64;nickname and nickname
+contains in list of online users.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> &#8211; text string sended by user</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="clientprotocol.ChatProtocol.signin">
+<tt class="descname">signin</tt><big>(</big><em>nick</em>, <em>password</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.signin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.signin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send NEW message to server with nick and 
+password as arguments to register new user.
+Add callbacks self.on_login and errback self.on_login_error to
+self.ok_defer to catch Ok or Error message from server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nick</strong> &#8211; nickname of new user</li>
+<li><strong>password</strong> &#8211; password of new user</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-serverprotocol">
+<span id="serverprotocol"></span><h2>serverprotocol<a class="headerlink" href="#module-serverprotocol" title="Permalink to this headline">¶</a></h2>
+<p>A chat server protocol and factory classes</p>
+<p>Exported classes :</p>
+<dl class="docutils">
+<dt>chatProtocolFactory &#8211; this class is inheritor of </dt>
+<dd>twisted.internet.protocol.ServerFactory class</dd>
+</dl>
+<dl class="class">
+<dt id="serverprotocol.ChatProtocol">
+<em class="property">class </em><tt class="descclassname">serverprotocol.</tt><tt class="descname">ChatProtocol</tt><a class="reference internal" href="_modules/serverprotocol.html#ChatProtocol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serverprotocol.ChatProtocol" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class realize server-client relations (for each one client)
+Inherits from twisted.protocols.basic.LineOnlyReceiver class</p>
+<p>Class data attributes :</p>
+<p>nickname &#8211; string-type user nick that used for identitification client in chat</p>
+<dl class="docutils">
+<dt>Override methods :</dt>
+<dd><dl class="first last docutils">
+<dt>connectionMade &#8211; callback, calls when user connected </dt>
+<dd>to server</dd>
+<dt>conectionLost &#8211; callback, calls when user disconnected </dt>
+<dd>from server</dd>
+<dt>lineReceived &#8211; callback, calls when server received </dt>
+<dd>some data from user</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="serverprotocol.ChatProtocol.connectionLost">
+<tt class="descname">connectionLost</tt><big>(</big><em>reason</em><big>)</big><a class="reference internal" href="_modules/serverprotocol.html#ChatProtocol.connectionLost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serverprotocol.ChatProtocol.connectionLost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback, calls each time when client disconnected from server</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="serverprotocol.ChatProtocol.connectionMade">
+<tt class="descname">connectionMade</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/serverprotocol.html#ChatProtocol.connectionMade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serverprotocol.ChatProtocol.connectionMade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback, calls each time when client connected to server</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="serverprotocol.ChatProtocol.lineReceived">
+<tt class="descname">lineReceived</tt><big>(</big><em>line</em><big>)</big><a class="reference internal" href="_modules/serverprotocol.html#ChatProtocol.lineReceived"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serverprotocol.ChatProtocol.lineReceived" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback, calls each time when client recieved data from client
+Data must be the correct command
+Function calls parser for this command and 
+than calls command handler fucntion
+If command is not correct, function raises exception</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<em>str</em>) &#8211; line that received from client</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="serverprotocol.ChatProtocolFactory">
+<em class="property">class </em><tt class="descclassname">serverprotocol.</tt><tt class="descname">ChatProtocolFactory</tt><a class="reference internal" href="_modules/serverprotocol.html#ChatProtocolFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serverprotocol.ChatProtocolFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class stores a server configurations
+Inherits from twisted.internet.protocol.ServerFactory class</p>
+<p>Class data attributes :</p>
+<p>protocol &#8211; name of the protocol class for server</p>
+<dl class="docutils">
+<dt>filename &#8211; string-type name of file where saves informations </dt>
+<dd>about chat users</dd>
+</dl>
+<p>Override methods :</p>
+<blockquote>
+<div>__init__ &#8211; constuctor, calls one time when class is created</div></blockquote>
+<p>Public methods :</p>
+<blockquote>
+<div><p>registerNewUser &#8211;  calls when client is connected to server</p>
+<p>destroyUser &#8211; calls when client is disconnected from server</p>
+</div></blockquote>
+<p>Example attributes :</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>clientProtocols &#8211; list of connected in this time clients.</dt>
+<dd>Contents their protocols</dd>
+<dt>activeUsers &#8211; list of active in this time chat users.</dt>
+<dd>There are protocols of authorized clients.</dd>
+<dt>accountsData &#8211; example of class which realize control of users </dt>
+<dd>information</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="serverprotocol.ChatProtocolFactory.destroyUser">
+<tt class="descname">destroyUser</tt><big>(</big><em>protocol</em><big>)</big><a class="reference internal" href="_modules/serverprotocol.html#ChatProtocolFactory.destroyUser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serverprotocol.ChatProtocolFactory.destroyUser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method deletes protocol from connected client&#8217;s protocols</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="serverprotocol.ChatProtocolFactory.protocol">
+<tt class="descname">protocol</tt><a class="headerlink" href="#serverprotocol.ChatProtocolFactory.protocol" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#serverprotocol.ChatProtocol" title="serverprotocol.ChatProtocol"><tt class="xref py py-class docutils literal"><span class="pre">ChatProtocol</span></tt></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="serverprotocol.ChatProtocolFactory.registerNewUser">
+<tt class="descname">registerNewUser</tt><big>(</big><em>protocol</em><big>)</big><a class="reference internal" href="_modules/serverprotocol.html#ChatProtocolFactory.registerNewUser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serverprotocol.ChatProtocolFactory.registerNewUser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method adds protocol to other connected client&#8217;s protocols</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="serverprotocol.UnknownCommandException">
+<em class="property">exception </em><tt class="descclassname">serverprotocol.</tt><tt class="descname">UnknownCommandException</tt><a class="headerlink" href="#serverprotocol.UnknownCommandException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for exception which raises when server got incorrect command</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-basecmd">
+<span id="basecmd"></span><h2>basecmd<a class="headerlink" href="#module-basecmd" title="Permalink to this headline">¶</a></h2>
+<p>A Server Protocol library, contains a command handlers</p>
+<p>Export data :</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>commands &#8211; kind of {COMMAND: handlerFunctionName} dictionary</dt>
+<dd>that links each command with her handler function</dd>
+</dl>
+</div></blockquote>
+<p>Export functions :</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>closeProtocol &#8211; this procedure makes an actions which must be made</dt>
+<dd>when user leaves the Server</dd>
+</dl>
+</div></blockquote>
+<dl class="exception">
+<dt id="basecmd.CmdException">
+<em class="property">exception </em><tt class="descclassname">basecmd.</tt><tt class="descname">CmdException</tt><big>(</big><em>protocol</em>, <em>errorkey</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#CmdException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.CmdException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception class for any command handler function exceptions</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="basecmd.badNick">
+<tt class="descclassname">basecmd.</tt><tt class="descname">badNick</tt><big>(</big><em>nickname</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#badNick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.badNick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check correctable of nickname. 
+Returns false if nickname is correct</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="basecmd.closeProtocol">
+<tt class="descclassname">basecmd.</tt><tt class="descname">closeProtocol</tt><big>(</big><em>protocol</em>, <em>arg=''</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#closeProtocol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.closeProtocol" title="Permalink to this definition">¶</a></dt>
+<dd><p>This procedure makes an actions which must be made 
+when user leaves the Server</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>protocol</strong> &#8211; client protocol of leaving user</li>
+<li><strong>arg</strong> &#8211; string-type farewall message of leaving user</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Result :</p>
+<blockquote>
+<div>Deacivate this user
+Send service message to all active users
+Refresh users-lists for all active users in chat
+If user send farewall message it send with service message</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="basecmd.command">
+<em class="property">class </em><tt class="descclassname">basecmd.</tt><tt class="descname">command</tt><big>(</big><em>cmd</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.command" title="Permalink to this definition">¶</a></dt>
+<dd><p>An interface for addition elements in commands dictionary</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="basecmd.refreshNicks">
+<tt class="descclassname">basecmd.</tt><tt class="descname">refreshNicks</tt><big>(</big><em>factory</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#refreshNicks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.refreshNicks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Refresh users-lists for all active users in chat</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="basecmd.sendErrorMessage">
+<tt class="descclassname">basecmd.</tt><tt class="descname">sendErrorMessage</tt><big>(</big><em>protocol</em>, <em>error</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#sendErrorMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.sendErrorMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>This procedure sends any kind of error-information to user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>protocol</strong> &#8211; client protocol of user-reciever error message</li>
+<li><strong>error</strong> &#8211; string-literal error key. 
+error message is a value of this key 
+in error dictionary</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="basecmd.sendOK">
+<tt class="descclassname">basecmd.</tt><tt class="descname">sendOK</tt><big>(</big><em>protocol</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#sendOK"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.sendOK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send OK message for client</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="basecmd.sendServiceMessage">
+<tt class="descclassname">basecmd.</tt><tt class="descname">sendServiceMessage</tt><big>(</big><em>factory</em>, <em>nick</em>, <em>text</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#sendServiceMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.sendServiceMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>This procedure sends any kind of service-information 
+to all active users</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>factory</strong> &#8211; the server protocol factory that 
+contains info of activeusers</li>
+<li><strong>nick</strong> &#8211; string-type user nick which is 
+object of service information</li>
+<li><strong>text</strong> &#8211; string-type service message</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="basecmd.successConnect">
+<tt class="descclassname">basecmd.</tt><tt class="descname">successConnect</tt><big>(</big><em>protocol</em>, <em>nick</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#successConnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.successConnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>This procedure calls when user entered the chat</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>protocol</strong> &#8211; the protocol of authorized user</li>
+<li><strong>nick</strong> &#8211; string-type user&#8217;s nick</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Result :</p>
+<blockquote>
+<div><p>-set the user nick</p>
+<p>-send &#8216;OK&#8217; message for client</p>
+<p>-allows using the chat for user</p>
+<p>-send service-information message to other users in chat</p>
+<p>-refresh users-lists for all active users</p>
+</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="module-accountsclass">
+<span id="accountsclass"></span><h2>accountsclass<a class="headerlink" href="#module-accountsclass" title="Permalink to this headline">¶</a></h2>
+<p>Module contains a simple class which realize interface for work with
+server information about users : logins and passwords restiored in file</p>
+<p>Export classes :</p>
+<blockquote>
+<div>AccountsClass</div></blockquote>
+<dl class="class">
+<dt id="accountsclass.AccountsClass">
+<em class="property">class </em><tt class="descclassname">accountsclass.</tt><tt class="descname">AccountsClass</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="_modules/accountsclass.html#AccountsClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#accountsclass.AccountsClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Realize simple interface for work with
+server information about users</p>
+<p>Contruct for input name of the file with data</p>
+<p>Publec methods :</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>get_acc_list &#8211; method returns list of strings that contains </dt>
+<dd>login and password for chat user</dd>
+<dt>add_acc &#8211; method adds new account, restores login and </dt>
+<dd>password of new user</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="accountsclass.AccountsClass.add_acc">
+<tt class="descname">add_acc</tt><big>(</big><em>login</em>, <em>password</em><big>)</big><a class="reference internal" href="_modules/accountsclass.html#AccountsClass.add_acc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#accountsclass.AccountsClass.add_acc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates new string in server data file and restores
+login and password of new user there</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>login</strong> (<em>str</em>) &#8211; login of new user</li>
+<li><strong>password</strong> (<em>str</em>) &#8211; password for new login</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="accountsclass.AccountsClass.get_acc_list">
+<tt class="descname">get_acc_list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/accountsclass.html#AccountsClass.get_acc_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#accountsclass.AccountsClass.get_acc_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads data file and returns list of strings of file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">list of stings in file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-myparser">
+<span id="myparser"></span><h2>myparser<a class="headerlink" href="#module-myparser" title="Permalink to this headline">¶</a></h2>
+<p>A Client-Server commands parser module</p>
+<p>Export functions :</p>
+<p>parsingCommand &#8211; the command-parser function, using regular expressions</p>
+<dl class="function">
+<dt id="myparser.parsingCommand">
+<tt class="descclassname">myparser.</tt><tt class="descname">parsingCommand</tt><big>(</big><em>line</em><big>)</big><a class="reference internal" href="_modules/myparser.html#parsingCommand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myparser.parsingCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the tuple (prefix, cmd, args) - parts of string;
+but if string don&#8217;t satisfy the command-pattern, 
+will return (None, None, None)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> &#8211; the input data string</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">(prefix, cmd, args) - parts of line</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Chat Protocol Documentation</a><ul>
+<li><a class="reference internal" href="#module-clientprotocol">clientprotocol</a></li>
+<li><a class="reference internal" href="#module-serverprotocol">serverprotocol</a></li>
+<li><a class="reference internal" href="#module-basecmd">basecmd</a></li>
+<li><a class="reference internal" href="#module-accountsclass">accountsclass</a></li>
+<li><a class="reference internal" href="#module-myparser">myparser</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="server.html"
+                        title="previous chapter">Chat Server Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="gui.html"
+                        title="next chapter">Chat GUI Documentation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/protocol.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="gui.html" title="Chat GUI Documentation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="server.html" title="Chat Server Documentation"
+             >previous</a> |</li>
+        <li><a href="index.html">chat v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, M. Verzakov.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
