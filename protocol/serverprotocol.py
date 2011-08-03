@@ -111,10 +111,7 @@ class ChatProtocolFactory(ServerFactory):
                         information
     
     """
-
     protocol = ChatProtocol 
-    
-    #filename='/home/volodya/projects/python_chat/python_chat/ChatUsers'
     filename = 'ChatUsers'
 
     def __init__(self): 
@@ -122,7 +119,7 @@ class ChatProtocolFactory(ServerFactory):
         self.clientProtocols = []
         self.activeUsers = []
         self.accountsData = accountsclass.AccountsClass(self.filename)
-
+        
     def registerNewUser(self, protocol):
         """Method adds protocol to other connected client's protocols"""
         self.clientProtocols.append(protocol)

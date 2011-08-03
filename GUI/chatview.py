@@ -36,7 +36,7 @@ class ChatView(wx.Frame):
         toolbar = self.CreateToolBar()
         ID_SETTINGSTOOL = wx.NewId()
         toolbar.AddLabelTool(ID_SETTINGSTOOL, '',
-                             wx.Bitmap('GUI/icons/settings_button.png'))
+                             wx.Bitmap('/home/maxim/projects/python-chat/python_chat/GUI/icons/settings_button.png'))
         toolbar.Realize()
                     
         splitter = wx.SplitterWindow(self, -1)

@@ -1,7 +1,9 @@
 import unittest
 import wx
 import wx.lib.newevent
-from chatview import ChatView
+from twisted.trial import unittest
+
+from GUI.chatview import ChatView
 
 class cap(object):
     def send_msg(self, msg):
@@ -40,7 +42,7 @@ class TestExample(unittest.TestCase):
     def tearDown(self):
         self.frame.Destroy()
 
-    def testContactList(self):
+    def test_ContactList(self):
         names = ('one', 'two', 'three')
         test_res = self.frame.OnUpdateContactList(names)
         self.assertEqual(set(names), test_res)
@@ -51,20 +53,13 @@ class TestExample(unittest.TestCase):
         test_res = self.frame.OnUpdateContactList(names)
         self.assertEqual(set(names), test_res)
         
-    def testChatView(self):
+    def test_ChatView(self):
         test_res = self.frame.OnUpdateChatView('joe', '*', 'test')
         self.assertEqual(u'joe:  test', test_res)
         test_res = self.frame.OnUpdateChatView('joe', 'fred', 'test')
         self.assertEqual(u'joe: fred test', test_res)        
         
-    def testChatView2(self):
+    def test_ChatView2(self):
         test_res = self.frame.OnServiceChatView('joe', 'test')
         self.assertEqual(u'joe test', test_res)        
-
-def suite():
-    suite = unittest.makeSuite(TestExample, 'test')
-    return suite
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
 
