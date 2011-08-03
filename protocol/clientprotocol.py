@@ -21,7 +21,7 @@ import myparser
 
  
 class ChatProtocol(LineReceiver):
-    """Provide receiving and sending messages between client and server
+    """Provide receiving and sending messages between client and server.
     Class ChatProtocol derives twisted.protocol.basic.LineReceiver.    
     """
     def __init__(self):
@@ -31,14 +31,14 @@ class ChatProtocol(LineReceiver):
         self.gui.protocol = self
 
     def connectionMade(self):
-        """Overrides twisted.protocol.basic.LineReceiver.connectionMade
-        Initialize Login Dialog to set host and port for connection
+        """Overrides twisted.protocol.basic.LineReceiver.connectionMade.
+        Initialize Login Dialog to set host and port for connection.
         """
         self.ok_defer = defer.Deferred()
         self.login_gui.ShowModal()
                
     def lineReceived(self, line):
-        """Overrides twisted.protocol.basic.LineReceiver.lineReceived
+        """Overrides twisted.protocol.basic.LineReceiver.lineReceived.
         Send line to self.parser function.
         """
         self._parser(line)        
@@ -47,7 +47,7 @@ class ChatProtocol(LineReceiver):
         """Parse line to tuple of prefix, command and message.
         Call a function due to command.
 
-        @param line -- string message received from server
+        :param line: string message received from server
         """
         msg = myparser.parsingCommand(line)
         case = {'OK':self._recd_ok,
@@ -62,17 +62,15 @@ class ChatProtocol(LineReceiver):
             
     def _recd_ok(self, arg):
         """Called when received OK command from server.
-        
         Callback 'OK' to self.ok_defer
         """
         self.ok_defer.callback('OK')          
         
     def _recd_error(self, error_msg):
         """Called when received ERROR command from server.
-        
         Callback error to self.ok_defer with an error description
 
-        @param error_msg -- description of error
+        :param error_msg: description of error
         """
         self.ok_defer.errback(ValueError(error_msg[0]))
         
@@ -81,27 +79,25 @@ class ChatProtocol(LineReceiver):
         Call OnUpdateChatView method of gui with arguments:
         sender, destination and text message.
 
-        @param args -- list of sender, destination and text message.
+        :param args: list of sender, destination and text message.
         """
         self.gui.OnUpdateChatView(args[0], args[1], args[2][1:-1])
     
     def _recd_names(self, names):
         """Called when received NAMES command from server.
-        
         Call OnUpdateContactList method of gui with names as argument
 
-        @param names - list of online users
+        :param names: list of online users
         """
         self.names = names
         self.gui.OnUpdateContactList(names)
     
     def _recd_service_msg(self, args):
         """Called when received SERVICE command wrom server.
-        
         Call OnServiceChatView method of gui with sender and
         service text as arguments.
 
-        @param args -- list of user's nick and service text
+        :param args: list of user's nick and service text
         """
         self.gui.OnServiceChatView(args[0], args[1][1:-1])
         
@@ -110,7 +106,7 @@ class ChatProtocol(LineReceiver):
         Send direct message if line starts with @nickname and nickname
         contains in list of online users.
         
-        @param line -- text string sended by user
+        :param line: text string sended by user
         """
         destination = '*'
         msg = line.lstrip()
@@ -129,8 +125,10 @@ class ChatProtocol(LineReceiver):
         Add callbacks self.on_login and errback self.on_login_error to
         self.ok_defer to catch Ok or Error message from server.
         
-        @param nick -- user's nickname
-        @param password user's password
+        :param nick: user's nickname
+
+        :param password: user's password
+
         """
         self.sendLine(str('CONNECT %s %s' % (nick, password)))
         self.nick = nick
@@ -147,20 +145,18 @@ class ChatProtocol(LineReceiver):
         
     def _on_error(self, err):
         """Called when recevied error message from server.
-        
         Create error_dlg from GUI.errordlg with error message.
 
-        @param err -- error
+        :param err: error
         """
         error_dlg(err.getErrorMessage()[1:-1])               
     
     def _on_login_error(self, err):
         """Called when recevied error message from server when user login.
-        
         Create error_dlg from GUI.errordlg with error message.
         Show again login dialog.
 
-        @param err - error
+        :param err: error
         """
         error_dlg(err.getErrorMessage())
         self.login_gui.ShowModal()
@@ -171,8 +167,9 @@ class ChatProtocol(LineReceiver):
         Add callbacks self.on_login and errback self.on_login_error to
         self.ok_defer to catch Ok or Error message from server.
 
-        @param nick -- nickname of new user
-        @param password -- password of new user 
+        :param nick: nickname of new user
+
+        :param password: password of new user 
         """
         self.sendLine(str('NEW %s %s' % (nick, password)))
         self.nick = nick
@@ -186,7 +183,7 @@ class ChatProtocol(LineReceiver):
         Add callbacks on_change_nick and errback self.on_error to
         self.ok_defer to catch Ok or Error message from server.
 
-        @param new_nick - new user's nickname
+        :param new_nick: new user's nickname
         """
         self.sendLine(str('!%s NICK %s' % (self.nick, new_nick)))
         
@@ -206,7 +203,7 @@ class ChatProtocol(LineReceiver):
         """Called when user try to close program.
         Send QUIT message to server with last message as argument.
 
-        @param bye -- broadcast message by user who quit
+        :param bye: broadcast message by user who quit
         """
         self.sendLine(str("!%s QUIT '%s'" % (self.nick, bye)))
         reactor.stop()
@@ -218,14 +215,14 @@ class ChatClientFactory(ClientFactory):
         self.protocol = ChatProtocol
         
     def clientConnectionFailed(self, connector, reason):
-        """Overrides twisted.internet.protocol.ClientFactory.clientConnectionFailed
+        """Overrides twisted.internet.protocol.ClientFactory.clientConnectionFailed.
         Create error_dlg from GUI.errordlg with the reason why connection
         was failed
         """
         error_dlg('Connection Faild:\n%s' % reason.getErrorMessage())        
 
     def clientConnectionLost(self, connector, reason):
-        """Overrides twisted.internet.protocol.ClientFactory.clientConnectionFailed
+        """Overrides twisted.internet.protocol.ClientFactory.clientConnectionFailed.
         Create error_dlg from GUI.errordlg with the reason why connection
         was lost if it's not close clearly.
         """

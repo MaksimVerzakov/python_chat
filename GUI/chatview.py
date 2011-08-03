@@ -99,8 +99,7 @@ class ChatView(wx.Frame):
         """Called when server reports about changings in list of online users
         Update dictionary of online users and set random colors to new users.
          
-        @param names -- list of online users
-
+        :param names: list of online users
         """
         self.listctr.Clear()
         self.listctr.AppendItems(names)
@@ -128,9 +127,9 @@ class ChatView(wx.Frame):
 
         Add time, sender name, destination name (if necessary) to view text control.
         
-        @param sender -- nickname of person who send message
-        @param destination -- nickname of person which should received message or '*' if it's broadcast message
-        @param text -- message itself
+        :param sender: nickname of person who send message
+        :param destination: nickname of person which should received message or '*' if it's broadcast message
+        :param text: message itself
 
         """
         msgtime = time.strftime('%H:%M:%S', time.localtime(time.time()))
@@ -160,8 +159,8 @@ class ChatView(wx.Frame):
            
         Add sender name and service message to view text control.
 
-        @param sender -- nickname of person who made action
-        @param text -- message itself
+        :param sender: nickname of person who made action
+        :param text: message itself
         """
         msg = '%s %s\n' % (sender, text)
         pos = self.viewctrl.GetLastPosition()

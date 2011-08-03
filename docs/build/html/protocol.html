@@ -99,7 +99,7 @@ was lost if it&#8217;s not close clearly.</p>
 <dl class="class">
 <dt id="clientprotocol.ChatProtocol">
 <em class="property">class </em><tt class="descclassname">clientprotocol.</tt><tt class="descname">ChatProtocol</tt><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provide receiving and sending messages between client and server
+<dd><p>Provide receiving and sending messages between client and server.
 Class ChatProtocol derives twisted.protocol.basic.LineReceiver.</p>
 <dl class="method">
 <dt id="clientprotocol.ChatProtocol.change_nick">
@@ -108,20 +108,27 @@ Class ChatProtocol derives twisted.protocol.basic.LineReceiver.</p>
 change nickname.
 Add callbacks on_change_nick and errback self.on_error to
 self.ok_defer to catch Ok or Error message from server.</p>
-<p>&#64;param new_nick - new user&#8217;s nickname</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_nick</strong> &#8211; new user&#8217;s nickname</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="clientprotocol.ChatProtocol.connectionMade">
 <tt class="descname">connectionMade</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.connectionMade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.connectionMade" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overrides twisted.protocol.basic.LineReceiver.connectionMade
-Initialize Login Dialog to set host and port for connection</p>
+<dd><p>Overrides twisted.protocol.basic.LineReceiver.connectionMade.
+Initialize Login Dialog to set host and port for connection.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="clientprotocol.ChatProtocol.lineReceived">
 <tt class="descname">lineReceived</tt><big>(</big><em>line</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.lineReceived"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.lineReceived" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overrides twisted.protocol.basic.LineReceiver.lineReceived
+<dd><p>Overrides twisted.protocol.basic.LineReceiver.lineReceived.
 Send line to self.parser function.</p>
 </dd></dl>
 
@@ -132,8 +139,18 @@ Send line to self.parser function.</p>
 password as arguments to register exicting user.
 Add callbacks self.on_login and errback self.on_login_error to
 self.ok_defer to catch Ok or Error message from server.</p>
-<p>&#64;param nick &#8211; user&#8217;s nickname
-&#64;param password user&#8217;s password</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nick</strong> &#8211; user&#8217;s nickname</li>
+<li><strong>password</strong> &#8211; user&#8217;s password</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -141,7 +158,14 @@ self.ok_defer to catch Ok or Error message from server.</p>
 <tt class="descname">on_quit</tt><big>(</big><em>bye</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.on_quit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.on_quit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when user try to close program.
 Send QUIT message to server with last message as argument.</p>
-<p>&#64;param bye &#8211; broadcast message by user who quit</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>bye</strong> &#8211; broadcast message by user who quit</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -150,7 +174,14 @@ Send QUIT message to server with last message as argument.</p>
 <dd><p>Send broadcast message to server if destination unknown.
 Send direct message if line starts with &#64;nickname and nickname
 contains in list of online users.</p>
-<p>&#64;param line &#8211; text string sended by user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> &#8211; text string sended by user</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -160,8 +191,18 @@ contains in list of online users.</p>
 password as arguments to register new user.
 Add callbacks self.on_login and errback self.on_login_error to
 self.ok_defer to catch Ok or Error message from server.</p>
-<p>&#64;param nick &#8211; nickname of new user
-&#64;param password &#8211; password of new user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nick</strong> &#8211; nickname of new user</li>
+<li><strong>password</strong> &#8211; password of new user</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
