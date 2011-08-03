@@ -153,11 +153,9 @@ def namesAction(protocol, prefix=0, args=0):
     This is the NAMES command handler
     Calls when user want to take nicks of all active users
     
-    Arguments : 
     
-        prefix -- string-type user nick, unused parametr
-
-        args -- None, unused parametr
+    :param prefix: user nick, unused parametr
+    :param args: None, unused parametr
     
     Result :
     
@@ -175,11 +173,9 @@ def msgAction(protocol, prefix, args):
     This is the MSG command handler
     Calls when user want to send message to chat
     
-    Arguments : 
-    
-        prefix -- string-type user nick
-
-        args -- list with two string-type elements 
+    :param prefix: user nick
+    :type prefix: str
+    :param args: list with two string-type elements 
            first one is the destination of user's message :
                      * for all users or username of targer user
            second one is the messae text concluded in '' 
@@ -201,11 +197,10 @@ def quitAction(protocol, prefix, args):
     This is the QUIT command handler
     Calls when user close his chat window
     
-    Arguments : 
     
-        prefix -- string-type user nick
-
-        args -- list with one string-type element 
+    :param prefix: user nick
+    :type prefix: str
+    :param args: list with one string-type element 
            element is a 'goodbye'-message for other users
     
     Result :
@@ -232,11 +227,9 @@ def successConnect(protocol, nick):
     """
     This procedure calls when user entered the chat
     
-    Arguments :
     
-        protocol -- the protocol of authorized user
-
-        nick -- string-type user's nick
+    :param protocol: the protocol of authorized user
+    :param nick:string-type user's nick
     
     Result :
     
@@ -262,16 +255,12 @@ def sendServiceMessage(factory, nick, text):
     """
     This procedure sends any kind of service-information 
     to all active users
-    
-    Arguments :
-    
-        factory -- the server protocol factory that 
-        contains info of activeusers
-
-        nick -- string-type user nick which is 
+        
+    :param factory: the server protocol factory that 
+            contains info of activeusers
+    :param nick: string-type user nick which is 
         object of service information
-
-        text -- string-type service message
+    :param text: string-type service message
     
     """
     for user in factory.activeUsers:
@@ -282,11 +271,9 @@ def sendErrorMessage(protocol, error):
     """
     This procedure sends any kind of error-information to user
     
-    Arguments :
-    
-        protocol -- client protocol of user-reciever error message
+    :param protocol: client protocol of user-reciever error message
 
-        error -- string-literal error key. 
+    :param error: string-literal error key. 
                  error message is a value of this key 
                  in error dictionary
     
@@ -302,12 +289,10 @@ def closeProtocol(protocol, arg=''):
     """
     This procedure makes an actions which must be made 
     when user leaves the Server
-    
-    Arguments :
-    
-        protocol -- client protocol of leaving user
 
-        arg -- string-type farewall message of leaving user
+    :param protocol: client protocol of leaving user
+
+    :param arg: string-type farewall message of leaving user
     
     Result :
     
@@ -326,7 +311,12 @@ def closeProtocol(protocol, arg=''):
         refreshNicks(protocol.factory)
 
 def badNick(nickname):
+    """
+    Check correctable of nickname. 
+    Returns false if nickname is correct
+    """
     return (len(nickname) > MAX_NICK_LENGHT or ' ' in nickname)
 
 def sendOK(protocol):
+    """Send OK message for client"""
     protocol.sendLine('OK')
