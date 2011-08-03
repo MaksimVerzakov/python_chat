@@ -9,6 +9,7 @@ chatProtocolFactory -- this class is inheritor of
 """
 from twisted.internet.protocol import ServerFactory 
 from twisted.protocols.basic import LineOnlyReceiver 
+
 import basecmd 
 import accountsclass
 import myparser
@@ -102,7 +103,7 @@ class ChatProtocolFactory(ServerFactory):
 
     protocol = ChatProtocol 
     
-    filename = 'ChatUsers'
+    filename = '/home/volodya/projects/python_chat/python_chat/ChatUsers'
 
     def __init__(self): 
         """Set up default server configuration"""

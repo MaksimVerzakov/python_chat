@@ -17,7 +17,7 @@ MAX_NICK_LENGHT = 15
     
 commands = {}
 
-class command:
+class command(object):
     """An interface for addition elements in commands dictionary"""
     
     def __init__(self, cmd):
@@ -83,6 +83,7 @@ def connectAction(protocol, prefix, args):
          user doesn't enter the chat
     
     """
+    #import pdb;pdb.set_trace()
     users_list = protocol.factory.accountsData.get_acc_list()
     if len(args[0]) > MAX_NICK_LENGHT or ' ' in args[0]  or \
        ('%s %s\n' %(args[0], args[1])) not in users_list:
@@ -338,5 +339,4 @@ def closeProtocol(protocol, arg=''):
             msg += ' and tell : %s' % arg
         sendServiceMessage(protocol.factory, protocol.nickname, msg)
         refreshNicks(protocol.factory)
-        
 

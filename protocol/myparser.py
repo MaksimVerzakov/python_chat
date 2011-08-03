@@ -7,9 +7,6 @@ parsingCommand -- the command-parser function, using regular expressions
 """
 
 import re
-import unittest
-
-
 
 PTRN = r'''
             (?:!(\S+)\ )?    # prefix part
@@ -44,31 +41,3 @@ def parsingCommand(line):
         if m.group(4):
             args.append(m.group(4))
     return (prefix, cmd, args)
-
-
-class ParserTests(unittest.TestCase):
-    def test_parsing(self):
-        good = "!prefix CMD param1 param2 'text'"
-        res = ('prefix', 'CMD', ['param1', 'param2', "'text'"])
-        self.assertEqual(parsingCommand(good), res)
-        
-        good = "OK"
-        res = (None, 'OK', [])
-        self.assertEqual(parsingCommand(good),res)
-        
-        good = "!prefix CMD 'text'"
-        res = ('prefix', 'CMD', ["'text'"])
-        self.assertEqual(parsingCommand(good),res)
-        
-        good = "CMD param1"
-        res = (None, 'CMD', ['param1'])
-        self.assertEqual(parsingCommand(good), res)
-        
-        bad = "CMD 'text1' 'text2'"
-        res = (None, 'CMD', ["'text1'"])
-        self.assertEqual(parsingCommand(bad), res)
-
-
-if __name__ == '__main__':
-    unittest.main()
-    
