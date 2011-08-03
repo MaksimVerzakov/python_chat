@@ -1,6 +1,3 @@
-import sys
-sys.path.append('/home/volodya/projects/python_chat/python_chat/')
-
 from protocol.serverprotocol import ChatProtocol
 from protocol.serverprotocol import ChatProtocolFactory
 
@@ -39,12 +36,14 @@ class TestProtocol(TestCase):
        
     def test_new_command_error_incorrect_data(self):
         self.protocol.lineReceived("NEW gahhahjjkjsfkkfkk ho")
-        self.assertCommands(["ERROR '%s'" %err_text['err_incorrect_data']])
+        self.assertCommands(["ERROR '%s'" % 
+                             err_text['err_incorrect_data']])
        
     
     def test_new_command_error_usr_exist(self):
         self.protocol.lineReceived("NEW hey ho")
-        self.assertCommands(["ERROR '%s'" %err_text['err_user_exist']])
+        self.assertCommands(["ERROR '%s'" % 
+                              err_text['err_user_exist']])
     
     def test_msg_command(self):
         self.protocol.lineReceived("CONNECT hey ho")
@@ -62,7 +61,8 @@ class TestProtocol(TestCase):
         self.protocol.lineReceived("CONNECT hey ho")
         self.protocol.lineReceived("!hey QUIT 'message'")
 
-        self.assertFalse(self.protocol in self.protocol.factory.activeUsers)
+        self.assertFalse(self.protocol in 
+                         self.protocol.factory.activeUsers)
     
     def tearDown(self):
         self.protocol.transport.loseConnection()

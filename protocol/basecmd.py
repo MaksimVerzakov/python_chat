@@ -32,31 +32,18 @@ class command(object):
         """
         commands[self.name] = func
         
-class ExClass(BaseException):
+class CmdException(BaseException):
     """Exception class for any command handler function exceptions"""
     
-    def __init__(self):
+    def __init__(self, protocol, errorkey):
         """Set error message for exception"""
-        self.msg = self.__class__.__name__
-    def __str__(self):
-        """Print exception error info"""
-        return self.msg
+        self.protocol = protocol
+        self.errorkey = errorkey
         
-class ExIncorrectData(ExClass):
-    """
-    Exception class for err_incorrect_data error in 
-    CONNECT and NICK and NEW commands
-    
-    """
-    pass
-    
-class ExUserExist(ExClass):
-    """
-    Exception class for err_user_exist error in 
-    NEW and NICK commands
-    """
-    pass
-
+    def __call__(self):
+        """Print exception error info"""
+        sendErrorMessage(self.protocol, self.errorkey)
+        
 @command('CONNECT')
 def connectAction(protocol, prefix, args):
     """
@@ -83,12 +70,10 @@ def connectAction(protocol, prefix, args):
          user doesn't enter the chat
     
     """
-    #import pdb;pdb.set_trace()
     users_list = protocol.factory.accountsData.get_acc_list()
-    if len(args[0]) > MAX_NICK_LENGHT or ' ' in args[0]  or \
+    if  badNick(args[0]) or \
        ('%s %s\n' %(args[0], args[1])) not in users_list:
-           sendErrorMessage(protocol, 'err_incorrect_data')
-           raise ExIncorrectData
+            raise CmdException, (protocol, 'err_incorrect_data')
     else:
         successConnect(protocol, args[0])
         
@@ -119,14 +104,12 @@ def newAction(protocol, prefix, args):
              user doesn't enter the chat
     
     """
-    if len(args[0]) > MAX_NICK_LENGHT or ' ' in args[0]:
-        sendErrorMessage(protocol, 'err_incorrect_data')
-        raise ExIncorrectData
+    if badNick(args[0]):
+        raise CmdException, (protocol, 'err_incorrect_data')
     users_list = protocol.factory.accountsData.get_acc_list()
     for account in users_list:
         if account.split()[0].startswith(args[0]):
-            sendErrorMessage(protocol, 'err_user_exist')
-            raise ExUserExist
+            raise CmdException, (protocol, 'err_user_exist')
     protocol.factory.accountsData.add_acc(args[0], args[1])
     successConnect(protocol, args[0])
 
@@ -156,16 +139,15 @@ def nickAction(protocol, prefix, args):
     
     """
     if prefix != args[0]:
-        if len(args[0]) > MAX_NICK_LENGHT or ' ' in args[0]:
-            sendErrorMessage(protocol, 'err_incorrect_data')
-            raise ExIncorrectData
+        if badNick(args[0]):
+            raise CmdException, (protocol, 'err_incorrect_data')
         for user in protocol.factory.activeUsers:
             if user.nickname == args[0]:
-                sendErrorMessage(protocol, 'err_user_exist')
-                raise ExUserExist
+                raise CmdException, (protocol, 'err_user_exist')
         protocol.nickname = args[0]
-        protocol.sendLine('OK')
-        sendServiceMessage(protocol.factory, prefix, serv_text['serv_change_nick'] + args[0])
+        sendOK(protocol)
+        sendServiceMessage(protocol.factory, prefix, 
+                           serv_text['serv_change_nick'] + args[0])
         refreshNicks(protocol.factory)
 
 @command('NAMES')
@@ -272,20 +254,24 @@ def successConnect(protocol, nick):
     
     """
     protocol.nickname = nick
-    protocol.sendLine('OK')
+    sendOK(protocol)
     protocol.factory.activeUsers.append(protocol)
-    sendServiceMessage(protocol.factory, nick, serv_text['serv_connect'])
+    sendServiceMessage(protocol.factory, nick, 
+                       serv_text['serv_connect'])
     refreshNicks(protocol.factory)
 
 def sendServiceMessage(factory, nick, text):
     """
-    This procedure sends any kind of service-information to all active users
+    This procedure sends any kind of service-information 
+    to all active users
     
     Arguments :
     
-        factory -- the server protocol factory that contains info of activeusers
+        factory -- the server protocol factory that 
+        contains info of activeusers
 
-        nick -- string-type user nick which is object of service information
+        nick -- string-type user nick which is 
+        object of service information
 
         text -- string-type service message
     
@@ -303,7 +289,8 @@ def sendErrorMessage(protocol, error):
         protocol -- client protocol of user-reciever error message
 
         error -- string-literal error key. 
-                 error message is a value of this key in error dictionary
+                 error message is a value of this key 
+                 in error dictionary
     
     """
     protocol.sendLine("ERROR '%s'" %err_text[error])
@@ -340,3 +327,8 @@ def closeProtocol(protocol, arg=''):
         sendServiceMessage(protocol.factory, protocol.nickname, msg)
         refreshNicks(protocol.factory)
 
+def badNick(nickname):
+    return (len(nickname) > MAX_NICK_LENGHT or ' ' in nickname)
+
+def sendOK(protocol):
+    protocol.sendLine('OK')

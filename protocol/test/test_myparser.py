@@ -1,6 +1,3 @@
-import sys
-sys.path.append('/home/volodya/projects/python_chat/python_chat/')
-
 from protocol.myparser import parsingCommand
 
 import unittest
@@ -31,7 +28,3 @@ class ParserTests(unittest.TestCase):
         bad = "CMD 'text1' 'text2'"
         res = (None, 'CMD', ["'text1'"])
         self.assertEqual(parsingCommand(bad), res)
-
-
-if __name__ == '__main__':
-    unittest.main()
