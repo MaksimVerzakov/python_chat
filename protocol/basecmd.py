@@ -218,7 +218,7 @@ def quitAction(protocol, prefix, args):
     if not protocol.nickname:
         return
     closeProtocol(protocol, args[0])
-    protocol.transport.loseConnection()
+
 
 
 err_text = {'err_incorrect_data' : 'Incorrect data',

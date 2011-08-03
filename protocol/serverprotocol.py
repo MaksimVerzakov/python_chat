@@ -85,6 +85,7 @@ class ChatProtocolFactory(ServerFactory):
     Class data attributes :
     
     protocol -- name of the protocol class for server
+
     filename -- string-type name of file where saves informations 
                 about chat users
     
@@ -113,8 +114,8 @@ class ChatProtocolFactory(ServerFactory):
 
     protocol = ChatProtocol 
     
-    filename='/home/volodya/projects/python_chat/python_chat/ChatUsers'
-    #filename = 'ChatUsers'
+    #filename='/home/volodya/projects/python_chat/python_chat/ChatUsers'
+    filename = 'ChatUsers'
 
     def __init__(self): 
         """Set up default server configuration"""
@@ -128,4 +129,5 @@ class ChatProtocolFactory(ServerFactory):
 
     def destroyUser(self, protocol):
         """Method deletes protocol from connected client's protocols"""
+        protocol.transport.loseConnection()
         self.clientProtocols.remove(protocol)
