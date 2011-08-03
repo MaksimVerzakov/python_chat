@@ -215,6 +215,7 @@ def quitAction(protocol, prefix, args):
     protocol.transport.loseConnection()
 """
 
+
 err_text = {'err_incorrect_data' : 'Incorrect data',
             'err_user_exist' : 'User already exist'}
 
@@ -225,10 +226,10 @@ serv_text = {'serv_connect' : ' is connected to our daft party',
 def successConnect(protocol, nick):
     """
     This procedure calls when user entered the chat
-    
-    
+        
     :param protocol: the protocol of authorized user
-    :param nick:string-type user's nick
+
+    :param nick: string-type user's nick
     
     Result :
     
