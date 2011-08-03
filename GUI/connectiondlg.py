@@ -47,7 +47,7 @@ class ConnectionDlgView(wx.Dialog):
         port = int(self._port.GetValue())  
         reactor.connectTCP(host, port, self.client_factory)
         self.Show(False)
-                
+                        
     def OnClose(self, event):
         """Calls when user tyr close the frame.
         Quit program. 

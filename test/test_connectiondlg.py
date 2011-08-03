@@ -1,6 +1,7 @@
 import unittest
 import wx
-from connectiondlg import ConnectionDlgView
+from twisted.trial import unittest
+from GUI.connectiondlg import ConnectionDlgView
 
 class ConnectionDlgTest(ConnectionDlgView):
     
@@ -22,7 +23,7 @@ class TestExample(unittest.TestCase):
     def tearDown(self):
         self.frame.Destroy()
 
-    def testButton(self):
+    def test_Button(self):
         self.frame._host.AppendText('host')
         self.frame._port.AppendText('1234')
         test_res = self.frame.OnConnect(None)
@@ -30,9 +31,3 @@ class TestExample(unittest.TestCase):
                 msg="First is wrong")
         self.assertEqual(1234, test_res[1])
 
-def suite():
-    suite = unittest.makeSuite(TestExample, 'testButton')
-    return suite
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='suite')

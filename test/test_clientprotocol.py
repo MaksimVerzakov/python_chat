@@ -19,8 +19,8 @@ class GuiSub(object):
         self.smsg = (nick, text)
     def OnUpdateContactList(self, names):
         self.names = names
-    def ShowModal(self):
-        self.is_shown.callback(True)
+    def Show(self, res):
+        self.is_shown.callback(res)
     def OnError(self, err_msg):
         self.err = err_msg
     def NewNick(self, one, two):

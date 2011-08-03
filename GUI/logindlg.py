@@ -64,8 +64,7 @@ class LoginDlgView(wx.Dialog):
         """
         nick = self._nick.GetValue()
         password = self._pass.GetValue()
-        self.protocol.login(nick, password)
-        self.Show(False)
+        self.protocol.login(nick, password)        
     
     def OnClose(self, event):
         self.protocol.transport.loseConnection()

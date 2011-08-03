@@ -141,6 +141,7 @@ class ChatProtocol(LineReceiver):
         Create ChatView frame from GUI.chatview.
         Set self as protocol to ChatView frame.
         """
+        self.login_gui.Show(False)
         self.gui.Show(True) 
         
     def _on_error(self, err):
@@ -158,8 +159,7 @@ class ChatProtocol(LineReceiver):
 
         :param err: error
         """
-        error_dlg(err.getErrorMessage())
-        self.login_gui.Show(True)
+        error_dlg(err.getErrorMessage())        
     
     def signin(self, nick, password):
         """Send NEW message to server with nick and 

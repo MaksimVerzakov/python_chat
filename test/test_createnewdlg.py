@@ -1,7 +1,8 @@
 import unittest
 import wx
 import wx.lib.newevent
-from createnewdlg import CreateNewDlgView, PasswordError
+from twisted.trial import unittest
+from GUI.createnewdlg import CreateNewDlgView, PasswordError
 
 class cap(object):
     def signin(self, nick, password1):
@@ -28,7 +29,7 @@ class TestExample(unittest.TestCase):
     def tearDown(self):
         self.frame.Destroy()
 
-    def test(self):
+    def test_ok(self):
         self.frame._nick.AppendText('nick')
         self.frame._pass1.AppendText('password')
         self.frame._pass2.AppendText('password')
@@ -36,16 +37,3 @@ class TestExample(unittest.TestCase):
         self.assertEqual('nick', test_res[0],
                 msg="First is wrong")
         self.assertEqual('password', test_res[1])
-    
-    def testError(self):
-        self.frame._nick.AppendText('nick')
-        self.frame._pass1.AppendText('password')
-        self.frame._pass2.AppendText('password2')
-        self.assertRaises(PasswordError, self.frame.OnCreate, None)
-
-def suite():
-    suite = unittest.makeSuite(TestExample, 'test')
-    return suite
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
