@@ -24,9 +24,7 @@ class MyApp(wx.App):
 
 
 def main():
-    """
-    Create MyApp instace, register it in reactor and run reactor.
-    """
+    """Create MyApp instace, register it in reactor and run reactor."""
     myWxAppInstance = MyApp()
     reactor.registerWxApp(myWxAppInstance)
     reactor.run()

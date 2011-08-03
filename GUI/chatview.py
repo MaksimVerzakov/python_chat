@@ -16,15 +16,12 @@ MsgEvent, EVT_NEW_MSG_EVENT = wx.lib.newevent.NewEvent()
 
 
 class ChatView(wx.Frame):
-    """
-    Main Frame that contains text controls for display chat and for 
+    """Main Frame that contains text controls for display chat and for 
     add message to chat. Also it contains listbox where are all
     online users.  
     """  
     def __init__(self, parent, title):
-        """
-        Override __init__ of wx.Frame.           
-        """
+        """Override __init__ of wx.Frame."""
         super(ChatView, self).__init__(parent, title=title, 
             size=(390, 350))
         
@@ -33,8 +30,7 @@ class ChatView(wx.Frame):
         self.users = {}             
         
     def InitUI(self):
-        """
-        Create all controls to a frame.
+        """Create all controls to a frame.
         Add binds to catch events
         """
         toolbar = self.CreateToolBar()
@@ -90,8 +86,7 @@ class ChatView(wx.Frame):
         self.SetAcceleratorTable(accel_tbl)            
         
     def OnSend(self, event):
-        """
-        Called when user pushes Send button.
+        """Called when user pushes Send button.
         If message isn't empty call send_msg method of protocol
         and clear text control.
         """
@@ -101,13 +96,10 @@ class ChatView(wx.Frame):
         self.tc.Clear()        
         
     def OnUpdateContactList(self, names):
-        """
-        Called when server reports about changings in list of online users
+        """Called when server reports about changings in list of online users
         Update dictionary of online users and set random colors to new users.
          
-        *atributes:*
-            names -- list of online users
-
+        :param names: list of online users
         """
         self.listctr.Clear()
         self.listctr.AppendItems(names)
@@ -122,8 +114,7 @@ class ChatView(wx.Frame):
         self.users = users
         
     def OnListBoxClick(self, event):
-        """
-        Called when user clicks on nickname in listbox.
+        """Called when user clicks on nickname in listbox.
          
         Add nickname to textbox to send direct message.
         """
@@ -136,12 +127,9 @@ class ChatView(wx.Frame):
 
         Add time, sender name, destination name (if necessary) to view text control.
         
-        *atributes*:
-            sender -- nickname of person who send message
-
-            destination -- nickname of person which should received message or '*' if it's broadcast message
-
-            text -- message itself
+        :param sender: nickname of person who send message
+        :param destination: nickname of person which should received message or '*' if it's broadcast message
+        :param text: message itself
 
         """
         msgtime = time.strftime('%H:%M:%S', time.localtime(time.time()))
@@ -167,15 +155,12 @@ class ChatView(wx.Frame):
         self.viewctrl.SetStyle(pos, colorLen, wx.TextAttr(color))
         
     def OnServiceChatView(self, sender, text):
-        """
-        Called when server reports about service message.
+        """Called when server reports about service message.
            
         Add sender name and service message to view text control.
 
-        *atributes:*
-            sender -- nickname of person who made action
-
-            text -- message itself
+        :param sender: nickname of person who made action
+        :param text: message itself
         """
         msg = '%s %s\n' % (sender, text)
         pos = self.viewctrl.GetLastPosition()
@@ -186,18 +171,19 @@ class ChatView(wx.Frame):
         self.viewctrl.SetStyle(pos, colorLen, wx.TextAttr(color))
              
     def OnSettings(self, event):
-        """
-        Called when user pushes Settings button.
+        """Called when user pushes Settings button.
          
         Create SettingsDlg from settingsdlg.
         """
         Dlg = SettingsDlg(self, -1, 'Settings')
         Dlg.ShowModal()
         Dlg.Destroy()
+    
+    def NewNick(self, new_nick, old_nick):
+        self.users[new_nick] = self.users[old_nick]
         
     def OnClose(self, event):
-        """
-        Called when user close the frame.
+        """Called when user close the frame.
            
         Send quit message to server and destoy self.
         """

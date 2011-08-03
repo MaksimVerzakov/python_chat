@@ -39,6 +39,7 @@ class CmdException(BaseException):
         """Set error message for exception"""
         self.protocol = protocol
         self.errorkey = errorkey
+        
     def __call__(self):
         """Print exception error info"""
         sendErrorMessage(self.protocol, self.errorkey)
