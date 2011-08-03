@@ -10,7 +10,7 @@ Chat Protocol Documentation
 .. automodule:: protocol
 
 clientprotocol
-------------
+--------------
 
 .. automodule:: clientprotocol
    :members:
@@ -35,7 +35,7 @@ accountsclass
 
 
 myparser
-------
+--------
 
 .. automodule:: myparser
    :members:

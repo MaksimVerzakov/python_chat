@@ -1,5 +1,3 @@
-import sys
-sys.path.append('/home/maxim/projects/python-chat/python_chat/')
 import unittest
 import wx
 

@@ -5,7 +5,7 @@
 
 
 Chat Documentation
-================================
+==================
 
 .. toctree::
    :maxdepth: 2

@@ -8,9 +8,6 @@ Exported Classes:
     ChatClientFactory -- derives twisted.internet.protocol.ClientFactory 
 
 """
-import sys
-sys.path.append('/home/maxim/projects/python-chat/python_chat/')
-
 from twisted.protocols.basic import LineReceiver
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor
@@ -49,6 +46,8 @@ class ChatProtocol(LineReceiver):
     def _parser(self, line):
         """Parse line to tuple of prefix, command and message.
         Call a function due to command.
+
+        @param line -- string message received from server
         """
         msg = myparser.parsingCommand(line)
         case = {'OK':self._recd_ok,
@@ -68,46 +67,50 @@ class ChatProtocol(LineReceiver):
         """
         self.ok_defer.callback('OK')          
         
-    def _recd_error(self, arg):
+    def _recd_error(self, error_msg):
         """Called when received ERROR command from server.
         
         Callback error to self.ok_defer with an error description
+
+        @param error_msg -- description of error
         """
-        self.ok_defer.errback(ValueError(arg[0]))
+        self.ok_defer.errback(ValueError(error_msg[0]))
         
-    def _recd_msg(self, arg):
+    def _recd_msg(self, args):
         """Called when received MSG command from server.
         Call OnUpdateChatView method of gui with arguments:
-        sender, destination and text message
+        sender, destination and text message.
+
+        @param args -- list of sender, destination and text message.
         """
-        self.gui.OnUpdateChatView(arg[0], arg[1], arg[2][1:-1])
+        self.gui.OnUpdateChatView(args[0], args[1], args[2][1:-1])
     
     def _recd_names(self, names):
         """Called when received NAMES command from server.
         
-        Call OnUpdateContactList method of gui with arguments:
-        names - list of online users
+        Call OnUpdateContactList method of gui with names as argument
+
+        @param names - list of online users
         """
         self.names = names
         self.gui.OnUpdateContactList(names)
     
-    def _recd_service_msg(self, arg):
+    def _recd_service_msg(self, args):
         """Called when received SERVICE command wrom server.
         
-        Call OnServiceChatView method of gui with arguments:
-        sender
-        service text
+        Call OnServiceChatView method of gui with sender and
+        service text as arguments.
+
+        @param args -- list of user's nick and service text
         """
-        self.gui.OnServiceChatView(arg[0], arg[1][1:-1])
+        self.gui.OnServiceChatView(args[0], args[1][1:-1])
         
     def send_msg(self, line):
         """Send broadcast message to server if destination unknown.
         Send direct message if line starts with @nickname and nickname
         contains in list of online users.
         
-        *atributes:*
-            line
-
+        @param line -- text string sended by user
         """
         destination = '*'
         msg = line.lstrip()
@@ -126,11 +129,8 @@ class ChatProtocol(LineReceiver):
         Add callbacks self.on_login and errback self.on_login_error to
         self.ok_defer to catch Ok or Error message from server.
         
-        *arguments:*
-            nick
-
-            password
-
+        @param nick -- user's nickname
+        @param password user's password
         """
         self.sendLine(str('CONNECT %s %s' % (nick, password)))
         self.nick = nick
@@ -149,6 +149,8 @@ class ChatProtocol(LineReceiver):
         """Called when recevied error message from server.
         
         Create error_dlg from GUI.errordlg with error message.
+
+        @param err -- error
         """
         error_dlg(err.getErrorMessage()[1:-1])               
     
@@ -157,6 +159,8 @@ class ChatProtocol(LineReceiver):
         
         Create error_dlg from GUI.errordlg with error message.
         Show again login dialog.
+
+        @param err - error
         """
         error_dlg(err.getErrorMessage())
         self.login_gui.ShowModal()
@@ -166,6 +170,9 @@ class ChatProtocol(LineReceiver):
         password as arguments to register new user.
         Add callbacks self.on_login and errback self.on_login_error to
         self.ok_defer to catch Ok or Error message from server.
+
+        @param nick -- nickname of new user
+        @param password -- password of new user 
         """
         self.sendLine(str('NEW %s %s' % (nick, password)))
         self.nick = nick
@@ -178,6 +185,8 @@ class ChatProtocol(LineReceiver):
         change nickname.
         Add callbacks on_change_nick and errback self.on_error to
         self.ok_defer to catch Ok or Error message from server.
+
+        @param new_nick - new user's nickname
         """
         self.sendLine(str('!%s NICK %s' % (self.nick, new_nick)))
         
@@ -196,6 +205,8 @@ class ChatProtocol(LineReceiver):
     def on_quit(self, bye):
         """Called when user try to close program.
         Send QUIT message to server with last message as argument.
+
+        @param bye -- broadcast message by user who quit
         """
         self.sendLine(str("!%s QUIT '%s'" % (self.nick, bye)))
         reactor.stop()

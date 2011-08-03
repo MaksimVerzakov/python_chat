@@ -5,7 +5,7 @@
 
 
 Client Documentation
-================================
+====================
 
 .. automodule:: client
    :members:

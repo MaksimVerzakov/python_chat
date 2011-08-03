@@ -9,10 +9,10 @@ Chat Protocol Documentation
 
 .. automodule:: protocol
 
-chatprotocol
-------------
+clientprotocol
+--------------
 
-.. automodule:: chatprotocol
+.. automodule:: clientprotocol
    :members:
 
 serverprotocol
@@ -21,21 +21,21 @@ serverprotocol
 .. automodule:: serverprotocol
    :members:
 
-base_cmd
+basecmd
 --------
 
-.. automodule:: base_cmd
+.. automodule:: basecmd
    :members:
 
-accounts_class
+accountsclass
 --------------
 
-.. automodule:: accounts_class
+.. automodule:: accountsclass
    :members:
 
 
-parser
-------
+myparser
+--------
 
-.. automodule:: parser
+.. automodule:: myparser
    :members:

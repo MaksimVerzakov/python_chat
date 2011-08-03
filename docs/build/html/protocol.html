@@ -53,9 +53,18 @@
             
   <div class="section" id="module-protocol">
 <span id="chat-protocol-documentation"></span><h1>Chat Protocol Documentation<a class="headerlink" href="#module-protocol" title="Permalink to this headline">¶</a></h1>
-<p>Protocol</p>
-<div class="section" id="module-chatprotocol">
-<span id="chatprotocol"></span><h2>chatprotocol<a class="headerlink" href="#module-chatprotocol" title="Permalink to this headline">¶</a></h2>
+<p>Protocol package</p>
+<dl class="docutils">
+<dt>PACKAGE CONTENTS</dt>
+<dd><p class="first">clientprotocol</p>
+<p>serverprotocol</p>
+<p>basecmd</p>
+<p>accountsclass</p>
+<p class="last">myparser</p>
+</dd>
+</dl>
+<div class="section" id="module-clientprotocol">
+<span id="clientprotocol"></span><h2>clientprotocol<a class="headerlink" href="#module-clientprotocol" title="Permalink to this headline">¶</a></h2>
 <p>Module contains client part of classes required for connection 
 between client and server.</p>
 <dl class="docutils">
@@ -66,171 +75,93 @@ client and server</p>
 </dd>
 </dl>
 <dl class="class">
-<dt id="chatprotocol.ChatClientFactory">
-<em class="property">class </em><tt class="descclassname">chatprotocol.</tt><tt class="descname">ChatClientFactory</tt><a class="reference internal" href="_modules/chatprotocol.html#ChatClientFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatClientFactory" title="Permalink to this definition">¶</a></dt>
+<dt id="clientprotocol.ChatClientFactory">
+<em class="property">class </em><tt class="descclassname">clientprotocol.</tt><tt class="descname">ChatClientFactory</tt><a class="reference internal" href="_modules/clientprotocol.html#ChatClientFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatClientFactory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class ChatClientFactory derives twisted.internet.protocol.ClientFactory.</p>
 <dl class="method">
-<dt id="chatprotocol.ChatClientFactory.clientConnectionFailed">
-<tt class="descname">clientConnectionFailed</tt><big>(</big><em>connector</em>, <em>reason</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatClientFactory.clientConnectionFailed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatClientFactory.clientConnectionFailed" title="Permalink to this definition">¶</a></dt>
+<dt id="clientprotocol.ChatClientFactory.clientConnectionFailed">
+<tt class="descname">clientConnectionFailed</tt><big>(</big><em>connector</em>, <em>reason</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatClientFactory.clientConnectionFailed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatClientFactory.clientConnectionFailed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overrides twisted.internet.protocol.ClientFactory.clientConnectionFailed
 Create error_dlg from GUI.errordlg with the reason why connection
 was failed</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="chatprotocol.ChatClientFactory.clientConnectionLost">
-<tt class="descname">clientConnectionLost</tt><big>(</big><em>connector</em>, <em>reason</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatClientFactory.clientConnectionLost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatClientFactory.clientConnectionLost" title="Permalink to this definition">¶</a></dt>
+<dt id="clientprotocol.ChatClientFactory.clientConnectionLost">
+<tt class="descname">clientConnectionLost</tt><big>(</big><em>connector</em>, <em>reason</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatClientFactory.clientConnectionLost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatClientFactory.clientConnectionLost" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overrides twisted.internet.protocol.ClientFactory.clientConnectionFailed
 Create error_dlg from GUI.errordlg with the reason why connection
 was lost if it&#8217;s not close clearly.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="chatprotocol.ChatClientFactory.protocol">
-<tt class="descname">protocol</tt><a class="headerlink" href="#chatprotocol.ChatClientFactory.protocol" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#chatprotocol.ChatProtocol" title="chatprotocol.ChatProtocol"><tt class="xref py py-class docutils literal"><span class="pre">ChatProtocol</span></tt></a></p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
-<dt id="chatprotocol.ChatProtocol">
-<em class="property">class </em><tt class="descclassname">chatprotocol.</tt><tt class="descname">ChatProtocol</tt><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol" title="Permalink to this definition">¶</a></dt>
+<dt id="clientprotocol.ChatProtocol">
+<em class="property">class </em><tt class="descclassname">clientprotocol.</tt><tt class="descname">ChatProtocol</tt><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide receiving and sending messages between client and server
 Class ChatProtocol derives twisted.protocol.basic.LineReceiver.</p>
 <dl class="method">
-<dt id="chatprotocol.ChatProtocol.change_nick">
-<tt class="descname">change_nick</tt><big>(</big><em>new_nick</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.change_nick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.change_nick" title="Permalink to this definition">¶</a></dt>
+<dt id="clientprotocol.ChatProtocol.change_nick">
+<tt class="descname">change_nick</tt><big>(</big><em>new_nick</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.change_nick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.change_nick" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send NICK message to server with new nick as arguments to
 change nickname.
 Add callbacks on_change_nick and errback self.on_error to
 self.ok_defer to catch Ok or Error message from server.</p>
+<p>&#64;param new_nick - new user&#8217;s nickname</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="chatprotocol.ChatProtocol.connectionMade">
-<tt class="descname">connectionMade</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.connectionMade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.connectionMade" title="Permalink to this definition">¶</a></dt>
+<dt id="clientprotocol.ChatProtocol.connectionMade">
+<tt class="descname">connectionMade</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.connectionMade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.connectionMade" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overrides twisted.protocol.basic.LineReceiver.connectionMade
 Initialize Login Dialog to set host and port for connection</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="chatprotocol.ChatProtocol.lineReceived">
-<tt class="descname">lineReceived</tt><big>(</big><em>line</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.lineReceived"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.lineReceived" title="Permalink to this definition">¶</a></dt>
+<dt id="clientprotocol.ChatProtocol.lineReceived">
+<tt class="descname">lineReceived</tt><big>(</big><em>line</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.lineReceived"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.lineReceived" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overrides twisted.protocol.basic.LineReceiver.lineReceived
 Send line to self.parser function.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="chatprotocol.ChatProtocol.login">
-<tt class="descname">login</tt><big>(</big><em>nick</em>, <em>password</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.login" title="Permalink to this definition">¶</a></dt>
+<dt id="clientprotocol.ChatProtocol.login">
+<tt class="descname">login</tt><big>(</big><em>nick</em>, <em>password</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send CONNECT message to server with nick and 
 password as arguments to register exicting user.
 Add callbacks self.on_login and errback self.on_login_error to
 self.ok_defer to catch Ok or Error message from server.</p>
-<dl class="docutils">
-<dt><em>arguments:</em></dt>
-<dd><p class="first">nick</p>
-<p class="last">password</p>
-</dd>
-</dl>
+<p>&#64;param nick &#8211; user&#8217;s nickname
+&#64;param password user&#8217;s password</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="chatprotocol.ChatProtocol.on_error">
-<tt class="descname">on_error</tt><big>(</big><em>err</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.on_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.on_error" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when recevied error message from server.</p>
-<p>Create error_dlg from GUI.errordlg with error message.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="chatprotocol.ChatProtocol.on_login">
-<tt class="descname">on_login</tt><big>(</big><em>msg</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.on_login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.on_login" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when recevied OK message when user login.
-Create ChatView frame from GUI.chatview.
-Set self as protocol to ChatView frame.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="chatprotocol.ChatProtocol.on_login_error">
-<tt class="descname">on_login_error</tt><big>(</big><em>err</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.on_login_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.on_login_error" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when recevied error message from server when user login.</p>
-<p>Create error_dlg from GUI.errordlg with error message.
-Show again login dialog.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="chatprotocol.ChatProtocol.on_quit">
-<tt class="descname">on_quit</tt><big>(</big><em>bye</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.on_quit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.on_quit" title="Permalink to this definition">¶</a></dt>
+<dt id="clientprotocol.ChatProtocol.on_quit">
+<tt class="descname">on_quit</tt><big>(</big><em>bye</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.on_quit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.on_quit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when user try to close program.
 Send QUIT message to server with last message as argument.</p>
+<p>&#64;param bye &#8211; broadcast message by user who quit</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="chatprotocol.ChatProtocol.parser">
-<tt class="descname">parser</tt><big>(</big><em>line</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.parser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse line to tuple of prefix, command and message.
-Call a function due to command.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="chatprotocol.ChatProtocol.recd_error">
-<tt class="descname">recd_error</tt><big>(</big><em>arg</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.recd_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.recd_error" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when received ERROR command from server.</p>
-<p>Callback error to self.ok_defer with an error description</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="chatprotocol.ChatProtocol.recd_msg">
-<tt class="descname">recd_msg</tt><big>(</big><em>arg</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.recd_msg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.recd_msg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when received MSG command from server.
-Call OnUpdateChatView method of gui with arguments:
-sender, destination and text message</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="chatprotocol.ChatProtocol.recd_names">
-<tt class="descname">recd_names</tt><big>(</big><em>names</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.recd_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.recd_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when received NAMES command from server.</p>
-<p>Call OnUpdateContactList method of gui with arguments:
-names - list of online users</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="chatprotocol.ChatProtocol.recd_ok">
-<tt class="descname">recd_ok</tt><big>(</big><em>arg</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.recd_ok"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.recd_ok" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when received OK command from server.</p>
-<p>Callback &#8216;OK&#8217; to self.ok_defer</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="chatprotocol.ChatProtocol.recd_service_msg">
-<tt class="descname">recd_service_msg</tt><big>(</big><em>arg</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.recd_service_msg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.recd_service_msg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when received SERVICE command wrom server.</p>
-<p>Call OnServiceChatView method of gui with arguments:
-sender
-service text</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="chatprotocol.ChatProtocol.send_msg">
-<tt class="descname">send_msg</tt><big>(</big><em>line</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.send_msg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.send_msg" title="Permalink to this definition">¶</a></dt>
+<dt id="clientprotocol.ChatProtocol.send_msg">
+<tt class="descname">send_msg</tt><big>(</big><em>line</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.send_msg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.send_msg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send broadcast message to server if destination unknown.
 Send direct message if line starts with &#64;nickname and nickname
 contains in list of online users.</p>
-<dl class="docutils">
-<dt><em>atributes:</em></dt>
-<dd>line</dd>
-</dl>
+<p>&#64;param line &#8211; text string sended by user</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="chatprotocol.ChatProtocol.signin">
-<tt class="descname">signin</tt><big>(</big><em>nick</em>, <em>password</em><big>)</big><a class="reference internal" href="_modules/chatprotocol.html#ChatProtocol.signin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#chatprotocol.ChatProtocol.signin" title="Permalink to this definition">¶</a></dt>
+<dt id="clientprotocol.ChatProtocol.signin">
+<tt class="descname">signin</tt><big>(</big><em>nick</em>, <em>password</em><big>)</big><a class="reference internal" href="_modules/clientprotocol.html#ChatProtocol.signin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clientprotocol.ChatProtocol.signin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send NEW message to server with nick and 
 password as arguments to register new user.
 Add callbacks self.on_login and errback self.on_login_error to
 self.ok_defer to catch Ok or Error message from server.</p>
+<p>&#64;param nick &#8211; nickname of new user
+&#64;param password &#8211; password of new user</p>
 </dd></dl>
 
 </dd></dl>
@@ -335,8 +266,8 @@ filename &#8211; string-type name of file where saves informations about chat us
 </dd></dl>
 
 </div>
-<div class="section" id="module-base_cmd">
-<span id="base-cmd"></span><h2>base_cmd<a class="headerlink" href="#module-base_cmd" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-basecmd">
+<span id="basecmd"></span><h2>basecmd<a class="headerlink" href="#module-basecmd" title="Permalink to this headline">¶</a></h2>
 <p>A Server Protocol library, contains a command handlers</p>
 <p>Export data :</p>
 <blockquote>
@@ -353,28 +284,28 @@ filename &#8211; string-type name of file where saves informations about chat us
 </dl>
 </div></blockquote>
 <dl class="exception">
-<dt id="base_cmd.ExClass">
-<em class="property">exception </em><tt class="descclassname">base_cmd.</tt><tt class="descname">ExClass</tt><a class="reference internal" href="_modules/base_cmd.html#ExClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#base_cmd.ExClass" title="Permalink to this definition">¶</a></dt>
+<dt id="basecmd.ExClass">
+<em class="property">exception </em><tt class="descclassname">basecmd.</tt><tt class="descname">ExClass</tt><a class="reference internal" href="_modules/basecmd.html#ExClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.ExClass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exception class for any command handler function exceptions</p>
 </dd></dl>
 
 <dl class="exception">
-<dt id="base_cmd.ExIncorrectData">
-<em class="property">exception </em><tt class="descclassname">base_cmd.</tt><tt class="descname">ExIncorrectData</tt><a class="reference internal" href="_modules/base_cmd.html#ExIncorrectData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#base_cmd.ExIncorrectData" title="Permalink to this definition">¶</a></dt>
+<dt id="basecmd.ExIncorrectData">
+<em class="property">exception </em><tt class="descclassname">basecmd.</tt><tt class="descname">ExIncorrectData</tt><a class="reference internal" href="_modules/basecmd.html#ExIncorrectData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.ExIncorrectData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exception class for err_incorrect_data error in 
 CONNECT and NICK and NEW commands</p>
 </dd></dl>
 
 <dl class="exception">
-<dt id="base_cmd.ExUserExist">
-<em class="property">exception </em><tt class="descclassname">base_cmd.</tt><tt class="descname">ExUserExist</tt><a class="reference internal" href="_modules/base_cmd.html#ExUserExist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#base_cmd.ExUserExist" title="Permalink to this definition">¶</a></dt>
+<dt id="basecmd.ExUserExist">
+<em class="property">exception </em><tt class="descclassname">basecmd.</tt><tt class="descname">ExUserExist</tt><a class="reference internal" href="_modules/basecmd.html#ExUserExist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.ExUserExist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exception class for err_user_exist error in 
 NEW and NICK commands</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="base_cmd.closeProtocol">
-<tt class="descclassname">base_cmd.</tt><tt class="descname">closeProtocol</tt><big>(</big><em>protocol</em>, <em>arg=''</em><big>)</big><a class="reference internal" href="_modules/base_cmd.html#closeProtocol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#base_cmd.closeProtocol" title="Permalink to this definition">¶</a></dt>
+<dt id="basecmd.closeProtocol">
+<tt class="descclassname">basecmd.</tt><tt class="descname">closeProtocol</tt><big>(</big><em>protocol</em>, <em>arg=''</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#closeProtocol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.closeProtocol" title="Permalink to this definition">¶</a></dt>
 <dd><p>This procedure makes an actions which must be made 
 when user leaves the Server</p>
 <p>Arguments :</p>
@@ -391,20 +322,20 @@ If user send farewall message it send with service message</div></blockquote>
 </dd></dl>
 
 <dl class="class">
-<dt id="base_cmd.command">
-<em class="property">class </em><tt class="descclassname">base_cmd.</tt><tt class="descname">command</tt><big>(</big><em>cmd</em><big>)</big><a class="reference internal" href="_modules/base_cmd.html#command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#base_cmd.command" title="Permalink to this definition">¶</a></dt>
+<dt id="basecmd.command">
+<em class="property">class </em><tt class="descclassname">basecmd.</tt><tt class="descname">command</tt><big>(</big><em>cmd</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.command" title="Permalink to this definition">¶</a></dt>
 <dd><p>An interface for addition elements in commands dictionary</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="base_cmd.refreshNicks">
-<tt class="descclassname">base_cmd.</tt><tt class="descname">refreshNicks</tt><big>(</big><em>factory</em><big>)</big><a class="reference internal" href="_modules/base_cmd.html#refreshNicks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#base_cmd.refreshNicks" title="Permalink to this definition">¶</a></dt>
+<dt id="basecmd.refreshNicks">
+<tt class="descclassname">basecmd.</tt><tt class="descname">refreshNicks</tt><big>(</big><em>factory</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#refreshNicks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.refreshNicks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Refresh users-lists for all active users in chat</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="base_cmd.sendErrorMessage">
-<tt class="descclassname">base_cmd.</tt><tt class="descname">sendErrorMessage</tt><big>(</big><em>protocol</em>, <em>error</em><big>)</big><a class="reference internal" href="_modules/base_cmd.html#sendErrorMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#base_cmd.sendErrorMessage" title="Permalink to this definition">¶</a></dt>
+<dt id="basecmd.sendErrorMessage">
+<tt class="descclassname">basecmd.</tt><tt class="descname">sendErrorMessage</tt><big>(</big><em>protocol</em>, <em>error</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#sendErrorMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.sendErrorMessage" title="Permalink to this definition">¶</a></dt>
 <dd><p>This procedure sends any kind of error-information to user</p>
 <p>Arguments :</p>
 <blockquote>
@@ -417,8 +348,8 @@ If user send farewall message it send with service message</div></blockquote>
 </dd></dl>
 
 <dl class="function">
-<dt id="base_cmd.sendServiceMessage">
-<tt class="descclassname">base_cmd.</tt><tt class="descname">sendServiceMessage</tt><big>(</big><em>factory</em>, <em>nick</em>, <em>text</em><big>)</big><a class="reference internal" href="_modules/base_cmd.html#sendServiceMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#base_cmd.sendServiceMessage" title="Permalink to this definition">¶</a></dt>
+<dt id="basecmd.sendServiceMessage">
+<tt class="descclassname">basecmd.</tt><tt class="descname">sendServiceMessage</tt><big>(</big><em>factory</em>, <em>nick</em>, <em>text</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#sendServiceMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.sendServiceMessage" title="Permalink to this definition">¶</a></dt>
 <dd><p>This procedure sends any kind of service-information to all active users</p>
 <p>Arguments :</p>
 <blockquote>
@@ -429,8 +360,8 @@ If user send farewall message it send with service message</div></blockquote>
 </dd></dl>
 
 <dl class="function">
-<dt id="base_cmd.successConnect">
-<tt class="descclassname">base_cmd.</tt><tt class="descname">successConnect</tt><big>(</big><em>protocol</em>, <em>nick</em><big>)</big><a class="reference internal" href="_modules/base_cmd.html#successConnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#base_cmd.successConnect" title="Permalink to this definition">¶</a></dt>
+<dt id="basecmd.successConnect">
+<tt class="descclassname">basecmd.</tt><tt class="descname">successConnect</tt><big>(</big><em>protocol</em>, <em>nick</em><big>)</big><a class="reference internal" href="_modules/basecmd.html#successConnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#basecmd.successConnect" title="Permalink to this definition">¶</a></dt>
 <dd><p>This procedure calls when user entered the chat</p>
 <p>Arguments :</p>
 <blockquote>
@@ -448,16 +379,16 @@ If user send farewall message it send with service message</div></blockquote>
 </dd></dl>
 
 </div>
-<div class="section" id="module-accounts_class">
-<span id="accounts-class"></span><h2>accounts_class<a class="headerlink" href="#module-accounts_class" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-accountsclass">
+<span id="accountsclass"></span><h2>accountsclass<a class="headerlink" href="#module-accountsclass" title="Permalink to this headline">¶</a></h2>
 <p>Module contains a simple class which realize interface for work with
 server information about users : logins and passwords restiored in file</p>
 <p>Export classes :</p>
 <blockquote>
 <div>AccountsClass</div></blockquote>
 <dl class="class">
-<dt id="accounts_class.AccountsClass">
-<em class="property">class </em><tt class="descclassname">accounts_class.</tt><tt class="descname">AccountsClass</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="_modules/accounts_class.html#AccountsClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#accounts_class.AccountsClass" title="Permalink to this definition">¶</a></dt>
+<dt id="accountsclass.AccountsClass">
+<em class="property">class </em><tt class="descclassname">accountsclass.</tt><tt class="descname">AccountsClass</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="_modules/accountsclass.html#AccountsClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#accountsclass.AccountsClass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Realize simple interface for work with
 server information about users</p>
 <p>Contruct for input name of the file with data</p>
@@ -470,118 +401,39 @@ server information about users</p>
 <p>add_acc &#8211; method adds new account, restores login and password of new user</p>
 </div></blockquote>
 <dl class="method">
-<dt id="accounts_class.AccountsClass.add_acc">
-<tt class="descname">add_acc</tt><big>(</big><em>lgn</em>, <em>psswrd</em><big>)</big><a class="reference internal" href="_modules/accounts_class.html#AccountsClass.add_acc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#accounts_class.AccountsClass.add_acc" title="Permalink to this definition">¶</a></dt>
+<dt id="accountsclass.AccountsClass.add_acc">
+<tt class="descname">add_acc</tt><big>(</big><em>lgn</em>, <em>psswrd</em><big>)</big><a class="reference internal" href="_modules/accountsclass.html#AccountsClass.add_acc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#accountsclass.AccountsClass.add_acc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates new string in server data file and restores
 login and password of new user there</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="accounts_class.AccountsClass.get_acc_list">
-<tt class="descname">get_acc_list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/accounts_class.html#AccountsClass.get_acc_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#accounts_class.AccountsClass.get_acc_list" title="Permalink to this definition">¶</a></dt>
+<dt id="accountsclass.AccountsClass.get_acc_list">
+<tt class="descname">get_acc_list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/accountsclass.html#AccountsClass.get_acc_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#accountsclass.AccountsClass.get_acc_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads data file and returns list of strings of file</p>
 </dd></dl>
 
 </dd></dl>
 
 </div>
-<div class="section" id="module-parser">
-<span id="parser"></span><h2>parser<a class="headerlink" href="#module-parser" title="Permalink to this headline">¶</a></h2>
-<p>This is an interface to Python&#8217;s internal parser.</p>
-<dl class="attribute">
-<dt id="parser.ASTType">
-<tt class="descclassname">parser.</tt><tt class="descname">ASTType</tt><a class="headerlink" href="#parser.ASTType" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">st</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="parser.STType">
-<tt class="descclassname">parser.</tt><tt class="descname">STType</tt><a class="headerlink" href="#parser.STType" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">st</span></tt></p>
-</dd></dl>
-
+<div class="section" id="module-myparser">
+<span id="myparser"></span><h2>myparser<a class="headerlink" href="#module-myparser" title="Permalink to this headline">¶</a></h2>
+<p>A Client-Server commands parser module</p>
+<p>Export functions :</p>
+<p>parsingCommand &#8211; the command-parser function, using regular expressions</p>
 <dl class="function">
-<dt id="parser.ast2list">
-<tt class="descclassname">parser.</tt><tt class="descname">ast2list</tt><big>(</big><big>)</big><a class="headerlink" href="#parser.ast2list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a list-tree representation of an ST.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="parser.ast2tuple">
-<tt class="descclassname">parser.</tt><tt class="descname">ast2tuple</tt><big>(</big><big>)</big><a class="headerlink" href="#parser.ast2tuple" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a tuple-tree representation of an ST.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="parser.compileast">
-<tt class="descclassname">parser.</tt><tt class="descname">compileast</tt><big>(</big><big>)</big><a class="headerlink" href="#parser.compileast" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compiles an ST object into a code object.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="parser.compilest">
-<tt class="descclassname">parser.</tt><tt class="descname">compilest</tt><big>(</big><big>)</big><a class="headerlink" href="#parser.compilest" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compiles an ST object into a code object.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="parser.expr">
-<tt class="descclassname">parser.</tt><tt class="descname">expr</tt><big>(</big><big>)</big><a class="headerlink" href="#parser.expr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates an ST object from an expression.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="parser.isexpr">
-<tt class="descclassname">parser.</tt><tt class="descname">isexpr</tt><big>(</big><big>)</big><a class="headerlink" href="#parser.isexpr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determines if an ST object was created from an expression.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="parser.issuite">
-<tt class="descclassname">parser.</tt><tt class="descname">issuite</tt><big>(</big><big>)</big><a class="headerlink" href="#parser.issuite" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determines if an ST object was created from a suite.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="parser.sequence2ast">
-<tt class="descclassname">parser.</tt><tt class="descname">sequence2ast</tt><big>(</big><big>)</big><a class="headerlink" href="#parser.sequence2ast" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates an ST object from a tree representation.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="parser.sequence2st">
-<tt class="descclassname">parser.</tt><tt class="descname">sequence2st</tt><big>(</big><big>)</big><a class="headerlink" href="#parser.sequence2st" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates an ST object from a tree representation.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="parser.st2list">
-<tt class="descclassname">parser.</tt><tt class="descname">st2list</tt><big>(</big><big>)</big><a class="headerlink" href="#parser.st2list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a list-tree representation of an ST.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="parser.st2tuple">
-<tt class="descclassname">parser.</tt><tt class="descname">st2tuple</tt><big>(</big><big>)</big><a class="headerlink" href="#parser.st2tuple" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a tuple-tree representation of an ST.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="parser.suite">
-<tt class="descclassname">parser.</tt><tt class="descname">suite</tt><big>(</big><big>)</big><a class="headerlink" href="#parser.suite" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates an ST object from a suite.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="parser.tuple2ast">
-<tt class="descclassname">parser.</tt><tt class="descname">tuple2ast</tt><big>(</big><big>)</big><a class="headerlink" href="#parser.tuple2ast" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates an ST object from a tree representation.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="parser.tuple2st">
-<tt class="descclassname">parser.</tt><tt class="descname">tuple2st</tt><big>(</big><big>)</big><a class="headerlink" href="#parser.tuple2st" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates an ST object from a tree representation.</p>
+<dt id="myparser.parsingCommand">
+<tt class="descclassname">myparser.</tt><tt class="descname">parsingCommand</tt><big>(</big><em>line</em><big>)</big><a class="reference internal" href="_modules/myparser.html#parsingCommand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myparser.parsingCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the tuple (prefix, cmd, args) - parts of string;
+but if string don&#8217;t satisfy the command-pattern, 
+will return (None, None, None)</p>
+<p>Arguments :</p>
+<blockquote>
+<div><p>line &#8211; the input data string</p>
+<p>Global variables using :</p>
+<p>PTRN &#8211; the pattern of correct command
+REGEXP &#8211; the regular expression that describes the PTRN</p>
+</div></blockquote>
 </dd></dl>
 
 </div>
@@ -596,11 +448,11 @@ login and password of new user there</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Chat Protocol Documentation</a><ul>
-<li><a class="reference internal" href="#module-chatprotocol">chatprotocol</a></li>
+<li><a class="reference internal" href="#module-clientprotocol">clientprotocol</a></li>
 <li><a class="reference internal" href="#module-serverprotocol">serverprotocol</a></li>
-<li><a class="reference internal" href="#module-base_cmd">base_cmd</a></li>
-<li><a class="reference internal" href="#module-accounts_class">accounts_class</a></li>
-<li><a class="reference internal" href="#module-parser">parser</a></li>
+<li><a class="reference internal" href="#module-basecmd">basecmd</a></li>
+<li><a class="reference internal" href="#module-accountsclass">accountsclass</a></li>
+<li><a class="reference internal" href="#module-myparser">myparser</a></li>
 </ul>
 </li>
 </ul>
