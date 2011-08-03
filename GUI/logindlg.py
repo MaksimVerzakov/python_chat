@@ -45,8 +45,9 @@ class LoginDlgView(wx.Dialog):
         panel.SetSizer(hbox)
         
         self.Bind(wx.EVT_BUTTON, self.OnNewUser, id=create_new_btn.GetId())
-        self.Bind(wx.EVT_BUTTON, self.OnLogin, id=login_btn.GetId())  
-                
+        self.Bind(wx.EVT_BUTTON, self.OnLogin, id=login_btn.GetId())
+        self.Bind(wx.EVT_CLOSE, self.OnClose)  
+                        
     def OnNewUser(self, event):
         """Called when user pushes Create new button.
         Create CreateNewDlgView from createnewdlgview.
@@ -64,4 +65,7 @@ class LoginDlgView(wx.Dialog):
         nick = self._nick.GetValue()
         password = self._pass.GetValue()
         self.protocol.login(nick, password)
-        self.Close()
+        self.Show(False)
+    
+    def OnClose(self, event):
+        self.protocol.transport.loseConnection()

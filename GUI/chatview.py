@@ -187,5 +187,5 @@ class ChatView(wx.Frame):
            
         Send quit message to server and destoy self.
         """
-        self.protocol.on_quit('goodbye fellas')
-        #reactor.stop()
+        self.protocol.transport.loseConnection()
+        

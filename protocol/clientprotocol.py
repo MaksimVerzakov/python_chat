@@ -35,7 +35,7 @@ class ChatProtocol(LineReceiver):
         Initialize Login Dialog to set host and port for connection.
         """
         self.ok_defer = defer.Deferred()
-        self.login_gui.ShowModal()
+        self.login_gui.Show(True)
                
     def lineReceived(self, line):
         """Overrides twisted.protocol.basic.LineReceiver.lineReceived.
@@ -159,7 +159,7 @@ class ChatProtocol(LineReceiver):
         :param err: error
         """
         error_dlg(err.getErrorMessage())
-        self.login_gui.ShowModal()
+        self.login_gui.Show(True)
     
     def signin(self, nick, password):
         """Send NEW message to server with nick and 
@@ -199,15 +199,6 @@ class ChatProtocol(LineReceiver):
         self.d = defer.Deferred()
         return self.d
     
-    def on_quit(self, bye):
-        """Called when user try to close program.
-        Send QUIT message to server with last message as argument.
-
-        :param bye: broadcast message by user who quit
-        """
-        self.sendLine(str("!%s QUIT '%s'" % (self.nick, bye)))
-        reactor.stop()
-    
 
 class ChatClientFactory(ClientFactory):
     """Class ChatClientFactory derives twisted.internet.protocol.ClientFactory."""
@@ -228,3 +219,5 @@ class ChatClientFactory(ClientFactory):
         """
         if not reason.check(ConnectionDone):
             error_dlg('Connection Lost:\n%s' % reason.getErrorMessage())
+        else:
+            reactor.stop()
