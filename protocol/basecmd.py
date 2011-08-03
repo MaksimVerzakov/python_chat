@@ -190,10 +190,10 @@ def msgAction(protocol, prefix, args):
         msg = 'MSG %s %s %s' %(prefix, args[0], args[1])
         for user in protocol.factory.activeUsers:
             user.sendLine(msg)
-
+"""
 @command('QUIT')
 def quitAction(protocol, prefix, args):
-    """
+ 
     This is the QUIT command handler
     Calls when user close his chat window
     
@@ -209,12 +209,11 @@ def quitAction(protocol, prefix, args):
         and call procedure that makes an actions 
         which must be made when user leaves the Server
     
-    """
     if not protocol.nickname:
         return
     closeProtocol(protocol, args[0])
     protocol.transport.loseConnection()
-
+"""
 
 err_text = {'err_incorrect_data' : 'Incorrect data',
             'err_user_exist' : 'User already exist'}
@@ -285,30 +284,23 @@ def refreshNicks(factory):
     for user in factory.activeUsers:
         commands['NAMES'](user)
 
-def closeProtocol(protocol, arg=''):
+def closeProtocol(protocol):
     """
     This procedure makes an actions which must be made 
     when user leaves the Server
 
     :param protocol: client protocol of leaving user
 
-    :param arg: string-type farewall message of leaving user
-    
     Result :
     
         Deacivate this user
         Send service message to all active users
         Refresh users-lists for all active users in chat
-        If user send farewall message it send with service message
     
     """
-    if protocol.nickname and (protocol in protocol.factory.activeUsers):
-        protocol.factory.activeUsers.remove(protocol)
-        msg = serv_text['serv_leave']
-        if arg != '':
-            msg += ' and tell : %s' % arg
-        sendServiceMessage(protocol.factory, protocol.nickname, msg)
-        refreshNicks(protocol.factory)
+    protocol.factory.activeUsers.remove(protocol)
+    sendServiceMessage(protocol.factory, protocol.nickname, serv_text['serv_leave'])
+    refreshNicks(protocol.factory)
 
 def badNick(nickname):
     """
