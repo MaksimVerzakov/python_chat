@@ -9,6 +9,7 @@ from protocol.myparser import parsingCommand
 from twisted.trial.unittest import TestCase
 from twisted.test.proto_helpers import StringTransportWithDisconnection
 
+import os
 
 class TestProtocol(TestCase):
     def setUp(self):
@@ -17,6 +18,11 @@ class TestProtocol(TestCase):
         self.protocol.factory = ChatProtocolFactory()
         self.protocol.makeConnection(self.transport)
         self.transport.protocol = self.protocol
+        fl = os.open(self.protocol.factory.filename, os.O_CREAT |
+                                                   os.O_RDWR)
+                                                    
+        os.write(fl, 'hey ho\n')
+        os.close(fl)
     
     def split_commands(self):
         return self.transport.value().splitlines()
